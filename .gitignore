@@ -1,0 +1,22 @@
+# XAMPP
+xampp/
+htdocs/
+
+# Configurações locais
+.env
+
+# Banco de dados local
+*.sql
+
+# Logs
+*.log
+
+# Sistema operacional
+Thumbs.db
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Arquivos temporários
+*.tmp
