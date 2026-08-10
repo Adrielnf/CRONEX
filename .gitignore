@@ -20,3 +20,6 @@ Thumbs.db
 
 # Arquivos temporários
 *.tmp
+
+debug.log
+*.log
