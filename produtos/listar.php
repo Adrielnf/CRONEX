@@ -19,7 +19,10 @@ $resultado = mysqli_query($conexao, $sql);
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Cronex - Produtos</title>
 
@@ -29,187 +32,322 @@ $resultado = mysqli_query($conexao, $sql);
 
     <link
         rel="stylesheet"
-        href="../css/style.css">
+        href="../css/style.css?v=3">
 
 </head>
 
 <body>
 
-<div class="app">
+    <div class="app">
 
-<?php include "../includes/menu.php"; ?>
-<body>
+        <?php
 
-<div class="app">
+        $base = "../";
 
-<?php
-$base = "../";
-include "../includes/menu.php";
-?>
+        include "../includes/menu.php";
 
-<main class="main-content">
+        ?>
 
-    <header class="topbar">
+        <main class="main-content">
 
-        <div>
-            <h1>Produtos</h1>
-            <p>Gerencie todos os produtos cadastrados.</p>
-        </div>
+            <header class="topbar">
 
-        <div class="user-box">
-            <span>Administrador</span>
-        </div>
+                <div>
 
-    </header>
+                    <h1>
+                        Produtos
+                    </h1>
 
-    <section class="panel">
+                    <p>
+                        Gerencie todos os produtos cadastrados.
+                    </p>
 
-        <?php if (isset($_GET["sucesso"])) { ?>
-
-            <?php if ($_GET["sucesso"] == "cadastrado") { ?>
-                <div class="alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Produto cadastrado com sucesso!
                 </div>
-            <?php } ?>
 
-            <?php if ($_GET["sucesso"] == "atualizado") { ?>
-                <div class="alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Produto atualizado com sucesso!
+                <div class="user-box">
+
+                    <span>
+                        Administrador
+                    </span>
+
                 </div>
-            <?php } ?>
 
-            <?php if ($_GET["sucesso"] == "inativado") { ?>
-                <div class="alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Produto inativado com sucesso!
-                </div>
-            <?php } ?>
+            </header>
 
-        <?php } ?>
 
-        <?php if (isset($_GET["erro"])) { ?>
+            <section class="panel">
 
-            <div class="alert-error">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                Ocorreu um erro ao realizar a operação.
-            </div>
 
-        <?php } ?>
+                <?php if (isset($_GET["sucesso"])) { ?>
 
-        <div class="panel-header">
+                    <?php if ($_GET["sucesso"] == "cadastrado") { ?>
 
-            <h2>Lista de Produtos</h2>
+                        <div class="alert-success">
 
-            <a href="cadastrar.php" class="btn-primary">
-                + Novo Produto
-            </a>
+                            <i class="fa-solid fa-circle-check"></i>
 
-        </div>
+                            Produto cadastrado com sucesso!
 
-        <div class="table-toolbar">
+                        </div>
 
-            <input
-                type="text"
-                placeholder="Pesquisar produto..."
-                class="search-input">
+                    <?php } ?>
 
-            <select class="filter-select">
-                <option>Todos</option>
-                <option>Lingerie</option>
-                <option>Fitness</option>
-                <option>Ativos</option>
-                <option>Inativos</option>
-            </select>
 
-        </div>
+                    <?php if ($_GET["sucesso"] == "atualizado") { ?>
 
-        <table class="cronex-table">
+                        <div class="alert-success">
 
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Produto</th>
-                    <th>Linha</th>
-                    <th>Categoria</th>
-                    <th>Tamanhos</th>
-                    <th>Tempo Médio</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
+                            <i class="fa-solid fa-circle-check"></i>
 
-            <tbody>
+                            Produto atualizado com sucesso!
 
-                <?php while ($linha = mysqli_fetch_assoc($resultado)) { ?>
+                        </div>
 
-                    <tr>
+                    <?php } ?>
 
-                        <td><?= htmlspecialchars($linha["codigo"]) ?></td>
 
-                        <td><?= htmlspecialchars($linha["nome"]) ?></td>
+                    <?php if ($_GET["sucesso"] == "inativado") { ?>
 
-                        <td><?= htmlspecialchars($linha["linha"]) ?></td>
+                        <div class="alert-success">
 
-                        <td><?= htmlspecialchars($linha["categoria"]) ?></td>
+                            <i class="fa-solid fa-circle-check"></i>
 
-                        <td><?= nl2br(htmlspecialchars($linha["tamanhos"])) ?></td>
+                            Produto inativado com sucesso!
 
-                        <td><?= htmlspecialchars($linha["tempo_medio"]) ?> min</td>
+                        </div>
 
-                        <td>
-
-                            <?php if ($linha["status"] == "Ativo") { ?>
-
-                                <span class="status concluido">
-                                    Ativo
-                                </span>
-
-                            <?php } else { ?>
-
-                                <span class="status atraso">
-                                    Inativo
-                                </span>
-
-                            <?php } ?>
-
-                        </td>
-
-                        <td>
-
-                            <a
-                                href="editar.php?id=<?= $linha["id"] ?>"
-                                class="btn-action edit">
-                                Editar
-                            </a>
-
-                            <?php if ($linha["status"] == "Ativo") { ?>
-
-                                <a
-                                    href="excluir.php?id=<?= $linha["id"] ?>"
-                                    class="btn-action delete"
-                                    onclick="return confirm('Deseja realmente inativar este produto?');">
-                                    Inativar
-                                </a>
-
-                            <?php } ?>
-
-                        </td>
-
-                    </tr>
+                    <?php } ?>
 
                 <?php } ?>
 
-            </tbody>
 
-        </table>
+                <?php if (isset($_GET["erro"])) { ?>
 
-    </section>
+                    <div class="alert-error">
 
-</main>
+                        <i class="fa-solid fa-circle-exclamation"></i>
 
-</div>
+                        Ocorreu um erro ao realizar a operação.
+
+                    </div>
+
+                <?php } ?>
+
+
+                <div class="panel-header">
+
+                    <h2>
+                        Lista de Produtos
+                    </h2>
+
+                    <a
+                        href="cadastrar.php"
+                        class="btn-primary">
+                        + Novo Produto
+                    </a>
+
+                </div>
+
+
+                <div class="table-toolbar">
+
+                    <input
+                        type="text"
+                        placeholder="Pesquisar produto..."
+                        class="search-input">
+
+                    <select class="filter-select">
+
+                        <option>
+                            Todos
+                        </option>
+
+                        <option>
+                            Lingerie
+                        </option>
+
+                        <option>
+                            Fitness
+                        </option>
+
+                        <option>
+                            Ativos
+                        </option>
+
+                        <option>
+                            Inativos
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <table class="cronex-table produtos-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Código
+                            </th>
+
+                            <th>
+                                Produto
+                            </th>
+
+                            <th>
+                                Linha
+                            </th>
+
+                            <th>
+                                Categoria
+                            </th>
+
+                            <th>
+                                Tamanhos
+                            </th>
+
+                            <th>
+                                Tempo Médio
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <?php while ($linha = mysqli_fetch_assoc($resultado)) { ?>
+
+                            <tr>
+
+                                <td class="col-codigo">
+
+                                    <?= htmlspecialchars(
+                                        $linha["codigo"]
+                                    ) ?>
+
+                                </td>
+
+
+                                <td class="col-produto">
+
+                                    <?= htmlspecialchars(
+                                        $linha["nome"]
+                                    ) ?>
+
+                                </td>
+
+
+                                <td class="col-linha">
+
+                                    <?= htmlspecialchars(
+                                        $linha["linha"]
+                                    ) ?>
+
+                                </td>
+
+
+                                <td class="col-categoria">
+
+                                    <?= htmlspecialchars(
+                                        $linha["categoria"]
+                                    ) ?>
+
+                                </td>
+
+
+                                <td class="col-tamanhos">
+
+                                    <?= nl2br(
+                                        htmlspecialchars(
+                                            $linha["tamanhos"]
+                                        )
+                                    ) ?>
+
+                                </td>
+
+
+                                <td class="col-tempo">
+
+                                    <?= htmlspecialchars(
+                                        $linha["tempo_medio"]
+                                    ) ?>
+
+                                    min
+
+                                </td>
+
+
+                                <td class="col-status">
+
+                                    <?php if ($linha["status"] == "Ativo") { ?>
+
+                                        <span class="status concluido">
+                                            Ativo
+                                        </span>
+
+                                    <?php } else { ?>
+
+                                        <span class="status atraso">
+                                            Inativo
+                                        </span>
+
+                                    <?php } ?>
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="editar.php?id=<?= $linha["id"] ?>"
+                                        class="btn-action edit">
+                                        Editar
+                                    </a>
+
+
+                                    <?php if ($linha["status"] == "Ativo") { ?>
+
+                                        <a
+                                            href="excluir.php?id=<?= $linha["id"] ?>"
+                                            class="btn-action delete"
+                                            onclick="return confirm('Deseja realmente inativar este produto?');">
+                                            Inativar
+                                        </a>
+
+                                    <?php } ?>
+
+                                </td>
+
+                            </tr>
+
+                        <?php } ?>
+
+                    </tbody>
+
+                </table>
+
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="../js/script.js"></script>
 
 </body>
 

@@ -384,6 +384,8 @@ function statusDashboard($producao)
 
 </head>
 
+
+
 <body>
 
     <div class="app">
@@ -579,107 +581,107 @@ function statusDashboard($producao)
 
                         <table>
 
-                            <thead>
-
-                                <tr>
-
-                                    <th>
-                                        Produção
-                                    </th>
-
-                                    <th>
-                                        Terceirizada
-                                    </th>
-
-                                    <th>
-                                        Produto
-                                    </th>
-
-                                    <th>
-                                        Situação
-                                    </th>
-
-                                </tr>
-
-                            </thead>
+                            <table class="dashboard-producoes">
+                                <thead>
+                                    <tr>
+                                        <th>Produção</th>
+                                        <th>Terceirizada</th>
+                                        <th>Produto</th>
+                                        <th>Situação</th>
+                                    </tr>
+                                </thead>
 
 
-                            <tbody>
+                                <tbody>
 
 
-                                <?php if (
-                                    count(
-                                        $producoesRecentes
-                                    ) > 0
-                                ) { ?>
-
-
-                                    <?php foreach (
-                                        $producoesRecentes
-                                        as $producao
+                                    <?php if (
+                                        count(
+                                            $producoesRecentes
+                                        ) > 0
                                     ) { ?>
 
 
-                                        <?php
+                                        <?php foreach (
+                                            $producoesRecentes
+                                            as $producao
+                                        ) { ?>
 
-                                        $status = statusDashboard(
-                                            $producao
-                                        );
 
-                                        ?>
+                                            <?php
+
+                                            $status = statusDashboard(
+                                                $producao
+                                            );
+
+                                            ?>
+
+
+                                            <tr>
+
+                                                <td class="col-producao">
+
+                                                    <strong>
+                                                        <?= htmlspecialchars(
+                                                            $producao["codigo"]
+                                                        ) ?>
+                                                    </strong>
+
+                                                </td>
+
+                                                <td class="col-terceirizada">
+
+                                                    <?= htmlspecialchars(
+                                                        $producao["terceirizado_nome"]
+                                                    ) ?>
+
+                                                </td>
+
+                                                <td class="col-produto">
+
+                                                    <?= htmlspecialchars(
+                                                        $producao["produto_nome"]
+                                                    ) ?>
+
+                                                </td>
+
+                                                <td class="col-situacao">
+
+                                                    <span
+                                                        class="status <?= htmlspecialchars(
+                                                                            $status["classe"]
+                                                                        ) ?>">
+
+                                                        <i
+                                                            class="fa-solid <?= htmlspecialchars(
+                                                                                $status["icone"]
+                                                                            ) ?>">
+                                                        </i>
+
+                                                        <?= htmlspecialchars(
+                                                            $status["texto"]
+                                                        ) ?>
+
+                                                    </span>
+
+                                                </td>
+
+                                            </tr>
+
+
+                                        <?php } ?>
+
+
+                                    <?php } else { ?>
 
 
                                         <tr>
 
-                                            <td>
+                                            <td
+                                                colspan="4"
+                                                style="text-align:center;">
 
-                                                <strong>
-
-                                                    <?= htmlspecialchars(
-                                                        $producao["codigo"]
-                                                    ) ?>
-
-                                                </strong>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <?= htmlspecialchars(
-                                                    $producao["terceirizado_nome"]
-                                                ) ?>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <?= htmlspecialchars(
-                                                    $producao["produto_nome"]
-                                                ) ?>
-
-                                            </td>
-
-
-                                            <td>
-
-                                                <span
-                                                    class="status <?= htmlspecialchars(
-                                                                        $status["classe"]
-                                                                    ) ?>">
-
-                                                    <i
-                                                        class="fa-solid <?= htmlspecialchars(
-                                                                            $status["icone"]
-                                                                        ) ?>">
-                                                    </i>
-
-                                                    <?= htmlspecialchars(
-                                                        $status["texto"]
-                                                    ) ?>
-
-                                                </span>
+                                                Nenhuma produção cadastrada.
 
                                             </td>
 
@@ -689,28 +691,9 @@ function statusDashboard($producao)
                                     <?php } ?>
 
 
-                                <?php } else { ?>
+                                </tbody>
 
-
-                                    <tr>
-
-                                        <td
-                                            colspan="4"
-                                            style="text-align:center;">
-
-                                            Nenhuma produção cadastrada.
-
-                                        </td>
-
-                                    </tr>
-
-
-                                <?php } ?>
-
-
-                            </tbody>
-
-                        </table>
+                            </table>
 
                     </div>
 
@@ -844,6 +827,8 @@ function statusDashboard($producao)
         </main>
 
     </div>
+
+    <script src="js/script.js"></script>
 
 </body>
 

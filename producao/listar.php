@@ -59,490 +59,504 @@ $resultado = mysqli_query($conexao, $sql);
 
     <link
         rel="stylesheet"
-        href="../css/style.css">
+        href="../css/style.css?v=4"
 
-</head>
+        </head>
 
 <body>
 
-<div class="app">
+    <div class="app">
 
-<?php
+        <?php
 
-$base = "../";
+        $base = "../";
 
-include "../includes/menu.php";
+        include "../includes/menu.php";
 
-?>
+        ?>
 
-<main class="main-content">
+        <main class="main-content">
 
-    <header class="topbar">
+            <header class="topbar">
 
-        <div>
+                <div>
 
-            <h1>Produção</h1>
+                    <h1>Produção</h1>
 
-            <p>
-                Acompanhe todas as ordens de produção.
-            </p>
-
-        </div>
-
-        <div class="user-box">
-
-            <span>Administrador</span>
-
-        </div>
-
-    </header>
-
-
-    <section class="panel">
-
-        <?php if (isset($_GET["sucesso"])) { ?>
-
-            <?php if ($_GET["sucesso"] == "cadastrado") { ?>
-
-                <div class="alert-success">
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                    Produção cadastrada com sucesso!
+                    <p>
+                        Acompanhe todas as ordens de produção.
+                    </p>
 
                 </div>
 
-            <?php } ?>
+                <div class="user-box">
 
-
-            <?php if ($_GET["sucesso"] == "atualizado") { ?>
-
-                <div class="alert-success">
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                    Produção atualizada com sucesso!
+                    <span>Administrador</span>
 
                 </div>
 
-            <?php } ?>
+            </header>
 
 
-            <?php if ($_GET["sucesso"] == "concluido") { ?>
+            <section class="panel">
 
-                <div class="alert-success">
+                <?php if (isset($_GET["sucesso"])) { ?>
 
-                    <i class="fa-solid fa-circle-check"></i>
+                    <?php if ($_GET["sucesso"] == "cadastrado") { ?>
 
-                    Produção concluída com sucesso!
+                        <div class="alert-success">
 
-                </div>
+                            <i class="fa-solid fa-circle-check"></i>
 
-            <?php } ?>
+                            Produção cadastrada com sucesso!
 
-        <?php } ?>
+                        </div>
 
+                    <?php } ?>
 
-        <?php if (isset($_GET["erro"])) { ?>
 
-            <div class="alert-error">
+                    <?php if ($_GET["sucesso"] == "atualizado") { ?>
 
-                <i class="fa-solid fa-circle-exclamation"></i>
+                        <div class="alert-success">
 
-                Ocorreu um erro ao realizar a operação.
+                            <i class="fa-solid fa-circle-check"></i>
 
-            </div>
+                            Produção atualizada com sucesso!
 
-        <?php } ?>
+                        </div>
 
+                    <?php } ?>
 
-        <div class="panel-header">
 
-            <h2>
-                Ordens de Produção
-            </h2>
+                    <?php if ($_GET["sucesso"] == "concluido") { ?>
 
-            <a
-                href="cadastrar.php"
-                class="btn-primary">
+                        <div class="alert-success">
 
-                <i class="fa-solid fa-plus"></i>
+                            <i class="fa-solid fa-circle-check"></i>
 
-                Nova Produção
+                            Produção concluída com sucesso!
 
-            </a>
+                        </div>
 
-        </div>
-
-
-        <div class="table-toolbar">
-
-            <input
-                type="text"
-                id="pesquisaProducao"
-                placeholder="Pesquisar produção..."
-                class="search-input">
-
-            <select
-                id="filtroStatus"
-                class="filter-select">
-
-                <option value="">
-                    Todos
-                </option>
-
-                <option value="Aguardando confirmação">
-                    Aguardando confirmação
-                </option>
-
-                <option value="Em produção">
-                    Em produção
-                </option>
-
-                <option value="Finalizada">
-                    Finalizada
-                </option>
-
-                <option value="Atrasado">
-                    Atrasado
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <table
-            class="cronex-table"
-            id="tabelaProducoes">
-
-            <thead>
-
-                <tr>
-
-                    <th>Código</th>
-
-                    <th>Produto</th>
-
-                    <th>Terceirizada</th>
-
-                    <th>Quantidade</th>
-
-                    <th>Envio</th>
-
-                    <th>Previsão</th>
-
-                    <th>Status</th>
-
-                    <th>Ações</th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody>
-
-            <?php if (
-                $resultado &&
-                mysqli_num_rows($resultado) > 0
-            ) { ?>
-
-                <?php while (
-                    $linha = mysqli_fetch_assoc($resultado)
-                ) { ?>
-
-                    <?php
-
-                    $status = trim($linha["status"]);
-
-                    if (
-                        $status != "Concluído" &&
-                        $status != "Finalizada" &&
-                        !empty($linha["previsao_entrega"]) &&
-                        $linha["previsao_entrega"] < date("Y-m-d")
-                    ) {
-
-                        $statusExibicao = "Atrasado";
-
-                        $classeStatus = "atraso";
-
-                    } elseif (
-                        $status == "Concluído" ||
-                        $status == "Finalizada"
-                    ) {
-
-                        $statusExibicao = "Finalizada";
-
-                        $classeStatus = "concluido";
-
-                    } elseif (
-                        $status == "Em produção"
-                    ) {
-
-                        $statusExibicao = "Em produção";
-
-                        $classeStatus = "andamento";
-
-                    } elseif (
-                        $status == "Aguardando confirmação"
-                    ) {
-
-                        $statusExibicao =
-                            "Aguardando confirmação";
-
-                        $classeStatus = "pendente";
-
-                    } else {
-
-                        $statusExibicao = $status;
-
-                        $classeStatus = "pendente";
-
-                    }
-
-                    ?>
-
-
-                    <tr
-                        data-status="<?= htmlspecialchars($statusExibicao) ?>">
-
-
-                        <td>
-
-                            <?= htmlspecialchars(
-                                $linha["codigo"]
-                            ) ?>
-
-                        </td>
-
-
-                        <td>
-
-                            <?= htmlspecialchars(
-                                $linha["produto_codigo"]
-                            ) ?>
-
-                            -
-
-                            <?= htmlspecialchars(
-                                $linha["produto_nome"]
-                            ) ?>
-
-                        </td>
-
-
-                        <td>
-
-                            <?= htmlspecialchars(
-                                $linha["terceirizado_codigo"]
-                            ) ?>
-
-                            -
-
-                            <?= htmlspecialchars(
-                                $linha["terceirizado_nome"]
-                            ) ?>
-
-                        </td>
-
-
-                        <td>
-
-                            <?= intval(
-                                $linha["quantidade"]
-                            ) ?>
-
-                        </td>
-
-
-                        <td>
-
-                            <?php if (
-                                !empty($linha["data_envio"])
-                            ) { ?>
-
-                                <?= date(
-                                    "d/m/Y",
-                                    strtotime(
-                                        $linha["data_envio"]
-                                    )
-                                ) ?>
-
-                            <?php } else { ?>
-
-                                -
-
-                            <?php } ?>
-
-                        </td>
-
-
-                        <td>
-
-                            <?php if (
-                                !empty(
-                                    $linha["previsao_entrega"]
-                                )
-                            ) { ?>
-
-                                <?= date(
-                                    "d/m/Y",
-                                    strtotime(
-                                        $linha["previsao_entrega"]
-                                    )
-                                ) ?>
-
-                            <?php } else { ?>
-
-                                -
-
-                            <?php } ?>
-
-                        </td>
-
-
-                        <td>
-
-                            <span
-                                class="status <?= $classeStatus ?>">
-
-                                <?= htmlspecialchars(
-                                    $statusExibicao
-                                ) ?>
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="editar.php?id=<?= intval(
-                                    $linha["id"]
-                                ) ?>"
-                                class="btn-action edit">
-
-                                Editar
-
-                            </a>
-
-                        </td>
-
-                    </tr>
+                    <?php } ?>
 
                 <?php } ?>
 
-            <?php } else { ?>
 
-                <tr>
+                <?php if (isset($_GET["erro"])) { ?>
 
-                    <td
-                        colspan="8"
-                        style="text-align: center;">
+                    <div class="alert-error">
 
-                        Nenhuma produção cadastrada.
+                        <i class="fa-solid fa-circle-exclamation"></i>
 
-                    </td>
+                        Ocorreu um erro ao realizar a operação.
 
-                </tr>
+                    </div>
 
-            <?php } ?>
-
-            </tbody>
-
-        </table>
-
-    </section>
-
-</main>
-
-</div>
+                <?php } ?>
 
 
-<script>
+                <div class="panel-header">
 
-const campoPesquisa =
-    document.getElementById("pesquisaProducao");
+                    <h2>
+                        Ordens de Produção
+                    </h2>
 
-const filtroStatus =
-    document.getElementById("filtroStatus");
+                    <a
+                        href="cadastrar.php"
+                        class="btn-primary">
 
-const tabela =
-    document.getElementById("tabelaProducoes");
+                        <i class="fa-solid fa-plus"></i>
 
+                        Nova Produção
 
-function filtrarProducoes() {
+                    </a>
 
-    const pesquisa =
-        campoPesquisa.value
-            .toLowerCase()
-            .trim();
-
-    const statusSelecionado =
-        filtroStatus.value
-            .toLowerCase()
-            .trim();
-
-    const linhas =
-        tabela.querySelectorAll(
-            "tbody tr[data-status]"
-        );
+                </div>
 
 
-    linhas.forEach(function (linha) {
+                <div class="table-toolbar">
 
-        const texto =
-            linha.textContent
-                .toLowerCase();
+                    <input
+                        type="text"
+                        id="pesquisaProducao"
+                        placeholder="Pesquisar produção..."
+                        class="search-input">
 
-        const status =
-            linha.dataset.status
+                    <select
+                        id="filtroStatus"
+                        class="filter-select">
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="Aguardando confirmação">
+                            Aguardando confirmação
+                        </option>
+
+                        <option value="Em produção">
+                            Em produção
+                        </option>
+
+                        <option value="Finalizada">
+                            Finalizada
+                        </option>
+
+                        <option value="Atrasado">
+                            Atrasado
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <table
+                    class="cronex-table producoes-table"
+                    id="tabelaProducoes">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Código</th>
+
+                            <th>Produto</th>
+
+                            <th>Terceirizada</th>
+
+                            <th>Quantidade</th>
+
+                            <th>Envio</th>
+
+                            <th>Previsão</th>
+
+                            <th>Status</th>
+
+                            <th>Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <?php if (
+                            $resultado &&
+                            mysqli_num_rows($resultado) > 0
+                        ) { ?>
+
+                            <?php while (
+                                $linha = mysqli_fetch_assoc($resultado)
+                            ) { ?>
+
+                                <?php
+
+                                $status = trim($linha["status"]);
+
+                                if (
+                                    $status != "Concluído" &&
+                                    $status != "Finalizada" &&
+                                    !empty($linha["previsao_entrega"]) &&
+                                    $linha["previsao_entrega"] < date("Y-m-d")
+                                ) {
+
+                                    $statusExibicao = "Atrasado";
+
+                                    $classeStatus = "atraso";
+                                } elseif (
+                                    $status == "Concluído" ||
+                                    $status == "Finalizada"
+                                ) {
+
+                                    $statusExibicao = "Finalizada";
+
+                                    $classeStatus = "concluido";
+                                } elseif (
+                                    $status == "Em produção"
+                                ) {
+
+                                    $statusExibicao = "Em produção";
+
+                                    $classeStatus = "andamento";
+                                } elseif (
+                                    $status == "Aguardando confirmação"
+                                ) {
+
+                                    $statusExibicao =
+                                        "Aguardando confirmação";
+
+                                    $classeStatus = "pendente";
+                                } else {
+
+                                    $statusExibicao = $status;
+
+                                    $classeStatus = "pendente";
+                                }
+
+                                ?>
+
+
+                                <tr
+                                    data-status="<?= htmlspecialchars($statusExibicao) ?>">
+
+
+                                    <td class="col-codigo">
+
+                                        <?= htmlspecialchars(
+                                            $linha["codigo"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-produto">
+
+                                        <?= htmlspecialchars(
+                                            $linha["produto_codigo"]
+                                        ) ?>
+
+                                        -
+
+                                        <?= htmlspecialchars(
+                                            $linha["produto_nome"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-terceirizada">
+
+                                        <?= htmlspecialchars(
+                                            $linha["terceirizado_codigo"]
+                                        ) ?>
+
+                                        -
+
+                                        <?= htmlspecialchars(
+                                            $linha["terceirizado_nome"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-quantidade">
+
+                                        <span class="mobile-info-label">
+                                            Quantidade
+                                        </span>
+
+                                        <span class="mobile-info-value">
+                                            <?= intval(
+                                                $linha["quantidade"]
+                                            ) ?>
+                                            peças
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="col-envio">
+
+                                        <span class="mobile-info-label">
+                                            Data de envio
+                                        </span>
+
+                                        <span class="mobile-info-value">
+
+                                            <?php if (
+                                                !empty($linha["data_envio"])
+                                            ) { ?>
+
+                                                <?= date(
+                                                    "d/m/Y",
+                                                    strtotime(
+                                                        $linha["data_envio"]
+                                                    )
+                                                ) ?>
+
+                                            <?php } else { ?>
+
+                                                -
+
+                                            <?php } ?>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="col-previsao">
+
+                                        <span class="mobile-info-label">
+                                            Previsão de entrega
+                                        </span>
+
+                                        <span class="mobile-info-value">
+
+                                            <?php if (
+                                                !empty($linha["previsao_entrega"])
+                                            ) { ?>
+
+                                                <?= date(
+                                                    "d/m/Y",
+                                                    strtotime(
+                                                        $linha["previsao_entrega"]
+                                                    )
+                                                ) ?>
+
+                                            <?php } else { ?>
+
+                                                -
+
+                                            <?php } ?>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="col-status">
+
+                                        <span
+                                            class="status <?= $classeStatus ?>">
+
+                                            <?= htmlspecialchars(
+                                                $statusExibicao
+                                            ) ?>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+                                            href="editar.php?id=<?= intval(
+                                                                    $linha["id"]
+                                                                ) ?>"
+                                            class="btn-action edit">
+
+                                            Editar
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+
+                        <?php } else { ?>
+
+                            <tr>
+
+                                <td
+                                    colspan="8"
+                                    style="text-align: center;">
+
+                                    Nenhuma produção cadastrada.
+
+                                </td>
+
+                            </tr>
+
+                        <?php } ?>
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script>
+        const campoPesquisa =
+            document.getElementById("pesquisaProducao");
+
+        const filtroStatus =
+            document.getElementById("filtroStatus");
+
+        const tabela =
+            document.getElementById("tabelaProducoes");
+
+
+        function filtrarProducoes() {
+
+            const pesquisa =
+                campoPesquisa.value
                 .toLowerCase()
                 .trim();
 
+            const statusSelecionado =
+                filtroStatus.value
+                .toLowerCase()
+                .trim();
 
-        const correspondePesquisa =
-            pesquisa === "" ||
-            texto.includes(pesquisa);
+            const linhas =
+                tabela.querySelectorAll(
+                    "tbody tr[data-status]"
+                );
 
 
-        const correspondeStatus =
-            statusSelecionado === "" ||
-            status === statusSelecionado;
+            linhas.forEach(function(linha) {
+
+                const texto =
+                    linha.textContent
+                    .toLowerCase();
+
+                const status =
+                    linha.dataset.status
+                    .toLowerCase()
+                    .trim();
 
 
-        if (
-            correspondePesquisa &&
-            correspondeStatus
-        ) {
+                const correspondePesquisa =
+                    pesquisa === "" ||
+                    texto.includes(pesquisa);
 
-            linha.style.display = "";
 
-        } else {
+                const correspondeStatus =
+                    statusSelecionado === "" ||
+                    status === statusSelecionado;
 
-            linha.style.display = "none";
+
+                if (
+                    correspondePesquisa &&
+                    correspondeStatus
+                ) {
+
+                    linha.style.display = "";
+
+                } else {
+
+                    linha.style.display = "none";
+
+                }
+
+            });
 
         }
 
-    });
 
-}
-
-
-campoPesquisa.addEventListener(
-    "input",
-    filtrarProducoes
-);
+        campoPesquisa.addEventListener(
+            "input",
+            filtrarProducoes
+        );
 
 
-filtroStatus.addEventListener(
-    "change",
-    filtrarProducoes
-);
-
-</script>
+        filtroStatus.addEventListener(
+            "change",
+            filtrarProducoes
+        );
+    </script>
 
 </body>
 

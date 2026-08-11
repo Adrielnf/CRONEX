@@ -672,6 +672,7 @@
         font-weight: bold;
         margin-bottom: 20px;
     }
+
     .portal-resumo {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -713,7 +714,7 @@
         color: #a66b00;
     }
 
-    .portal-resumo-card > div:last-child {
+    .portal-resumo-card>div:last-child {
         display: flex;
         flex-direction: column;
     }
@@ -851,7 +852,7 @@
         margin-bottom: 18px;
     }
 
-    .portal-info-grid > div {
+    .portal-info-grid>div {
         background: #f7f9fc;
         border-radius: 10px;
         padding: 12px;
@@ -962,7 +963,7 @@
         color: #08752c;
     }
 
-    .portal-status-final > i {
+    .portal-status-final>i {
         font-size: 22px;
     }
 
@@ -1062,7 +1063,7 @@
             min-height: 100vh;
         }
 
-        .app > .sidebar {
+        .app>.sidebar {
             display: none;
         }
 
@@ -1126,7 +1127,7 @@
             padding: 16px;
         }
 
-        .main-content > .topbar {
+        .main-content>.topbar {
             display: block;
             margin-bottom: 18px;
             padding: 0;
@@ -1135,20 +1136,20 @@
             box-shadow: none;
         }
 
-        .main-content > .topbar h1 {
+        .main-content>.topbar h1 {
             margin: 0 0 5px;
             font-size: 24px;
             line-height: 1.2;
         }
 
-        .main-content > .topbar p {
+        .main-content>.topbar p {
             margin: 0;
             font-size: 13px;
             line-height: 1.5;
             color: #667085;
         }
 
-        .main-content > .topbar .user-box {
+        .main-content>.topbar .user-box {
             display: none;
         }
 
@@ -1258,7 +1259,7 @@
             margin-bottom: 12px;
         }
 
-        .portal-info-grid > div {
+        .portal-info-grid>div {
             padding: 11px;
             border-radius: 9px;
         }
@@ -1322,7 +1323,7 @@
             border-radius: 10px;
         }
 
-        .portal-status-final > i {
+        .portal-status-final>i {
             font-size: 20px;
         }
 
@@ -1452,12 +1453,12 @@
             order: 1;
         }
 
-        .portal-mobile-header + .sidebar + .main-content .panel {
+        .portal-mobile-header+.sidebar+.main-content .panel {
             padding: 16px;
             border-radius: 14px;
         }
 
-        .portal-mobile-header + .sidebar + .main-content .panel-header {
+        .portal-mobile-header+.sidebar+.main-content .panel-header {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -1465,11 +1466,11 @@
             margin-bottom: 18px;
         }
 
-        .portal-mobile-header + .sidebar + .main-content .panel-header h2 {
+        .portal-mobile-header+.sidebar+.main-content .panel-header h2 {
             font-size: 19px;
         }
 
-        .portal-mobile-header + .sidebar + .main-content .panel-header .btn-secondary {
+        .portal-mobile-header+.sidebar+.main-content .panel-header .btn-secondary {
             width: 100%;
             min-height: 43px;
             display: flex;
@@ -1489,8 +1490,8 @@
         background: #f4f7ff;
     }
 
-    .coletor-endereco > i,
-    .coletor-previsao > i {
+    .coletor-endereco>i,
+    .coletor-previsao>i {
         margin-top: 3px;
         font-size: 18px;
         color: #4161e8;
@@ -1671,14 +1672,14 @@
         text-align: left;
     }
 
-    .modal-coleta-pedido > strong {
+    .modal-coleta-pedido>strong {
         color: #4161e8;
 
         font-size: 14px;
         font-weight: 700;
     }
 
-    .modal-coleta-pedido > span {
+    .modal-coleta-pedido>span {
         color: #344054;
 
         font-size: 13px;
@@ -2198,7 +2199,8 @@
             padding: 16px;
         }
 
-    }   
+    }
+
     /* =========================================================
     DASHBOARD - ALERTAS RÁPIDOS
     ========================================================= */
@@ -2259,7 +2261,7 @@
         font-size: 19px;
     }
 
-    .dashboard-alerta > div:last-child {
+    .dashboard-alerta>div:last-child {
         display: flex;
         flex-direction: column;
         gap: 3px;
@@ -2297,7 +2299,7 @@
         text-align: center;
     }
 
-    .dashboard-vazio > i {
+    .dashboard-vazio>i {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2352,7 +2354,7 @@
         border-bottom: none;
     }
 
-    .collection-item > div {
+    .collection-item>div {
         min-width: 0;
     }
 
@@ -2416,6 +2418,20 @@
         .collection-item {
             align-items: flex-start;
             flex-direction: column;
+        }
+
+        /* Ajuste exclusivo do cabeçalho dos painéis do Dashboard no mobile */
+        .dashboard-grid .panel-header {
+            gap: 8px;
+        }
+
+        .dashboard-grid .panel-header>div:first-child {
+            min-width: 0;
+        }
+
+        .dashboard-grid .panel-header>a:not(.btn-primary) {
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
     }
@@ -2584,7 +2600,7 @@
         font-size: 20px;
     }
 
-    .relatorio-card > div:last-child {
+    .relatorio-card>div:last-child {
         display: flex;
         flex-direction: column;
 
@@ -2651,7 +2667,7 @@
         font-size: 13px;
     }
 
-    .relatorio-resultados .panel-header > .btn-secondary {
+    .relatorio-resultados .panel-header>.btn-secondary {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -2672,7 +2688,7 @@
         cursor: pointer;
     }
 
-    .relatorio-resultados .panel-header > .btn-secondary:hover {
+    .relatorio-resultados .panel-header>.btn-secondary:hover {
         background: #f9fafb;
     }
 
@@ -2806,7 +2822,7 @@
         text-align: center !important;
     }
 
-    .relatorio-sem-dados > i {
+    .relatorio-sem-dados>i {
         display: block;
 
         margin-bottom: 12px;
@@ -2884,7 +2900,7 @@
             flex-direction: column;
         }
 
-        .relatorio-resultados .panel-header > .btn-secondary {
+        .relatorio-resultados .panel-header>.btn-secondary {
             width: 100%;
         }
     }
@@ -3304,3 +3320,1220 @@
         line-height: 1.2;
         white-space: nowrap;
     }
+
+    /* =========================================================
+   DASHBOARD - PRODUÇÕES RECENTES - MOBILE
+   ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .dashboard-producoes {
+            width: 100%;
+            min-width: 0 !important;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .dashboard-producoes thead {
+            display: none;
+        }
+
+        .dashboard-producoes tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dashboard-producoes tbody tr {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 6px 12px;
+
+            width: 100%;
+            padding: 15px;
+
+            border: 1px solid #e4e7ec;
+            border-radius: 14px;
+
+            background: #ffffff;
+
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05);
+        }
+
+        .dashboard-producoes tbody td {
+            display: block;
+
+            padding: 0;
+
+            border: none;
+
+            min-width: 0;
+
+            font-size: 13px;
+            line-height: 1.4;
+
+            overflow-wrap: anywhere;
+        }
+
+        .dashboard-producoes .col-producao {
+            grid-column: 1;
+        }
+
+        .dashboard-producoes .col-producao strong {
+            color: #101828;
+            font-size: 15px;
+        }
+
+        .dashboard-producoes .col-terceirizada {
+            grid-column: 1 / -1;
+
+            color: #475467;
+        }
+
+        .dashboard-producoes .col-produto {
+            grid-column: 1;
+
+            color: #667085;
+        }
+
+        .dashboard-producoes .col-situacao {
+            grid-column: 2;
+            grid-row: 1 / span 3;
+
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+
+        .dashboard-producoes .status {
+            white-space: normal;
+            text-align: center;
+            max-width: 130px;
+        }
+
+        .dashboard-producoes tbody tr td[colspan] {
+            grid-column: 1 / -1;
+
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+    }
+
+    /* =========================================================
+   MENU MOBILE
+   ========================================================= */
+
+    .menu-mobile,
+    .menu-mobile-toggle {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+
+        .menu-mobile-toggle {
+            position: fixed;
+            top: 10px;
+            right: 16px;
+            z-index: 1100;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            min-width: 44px;
+            height: 40px;
+            padding: 0 13px;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+
+            background: #ffffff;
+            color: #344054;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+        }
+
+        .menu-mobile-toggle i {
+            color: #4161e8;
+            font-size: 16px;
+        }
+
+        .menu-mobile {
+            display: none;
+
+            position: fixed;
+            top: 66px;
+            left: 0;
+            z-index: 1050;
+
+            width: 100%;
+            padding: 12px 16px;
+
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+
+            box-shadow: 0 5px 15px rgba(15, 23, 42, 0.08);
+        }
+
+        .menu-mobile.aberto {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .menu-mobile a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            width: 100%;
+            min-height: 46px;
+            padding: 0 13px;
+
+            border-radius: 10px;
+
+            color: #344054;
+            background: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .menu-mobile a:hover {
+            background: #f4f7ff;
+            color: #4161e8;
+        }
+
+        .menu-mobile a i {
+            width: 20px;
+
+            color: #4161e8;
+
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .menu-mobile hr {
+            width: 100%;
+
+            margin: 6px 0;
+
+            border: none;
+            border-top: 1px solid #eaecf0;
+        }
+
+    }
+
+    /* =========================================================
+   TERCEIRIZADOS - MOBILE
+   ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .terceirizados-table {
+            width: 100%;
+            min-width: 0 !important;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .terceirizados-table thead {
+            display: none;
+        }
+
+        .terceirizados-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .terceirizados-table tbody tr {
+            display: grid;
+            grid-template-columns: 1fr auto;
+
+            gap: 7px 12px;
+
+            width: 100%;
+            padding: 15px;
+
+            border: 1px solid #e4e7ec;
+            border-radius: 12px;
+
+            background: #ffffff;
+
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05);
+
+            box-sizing: border-box;
+        }
+
+        .terceirizados-table tbody td {
+            display: block;
+
+            min-width: 0;
+            padding: 0;
+
+            border: none;
+
+            font-size: 13px;
+            line-height: 1.4;
+
+            overflow-wrap: anywhere;
+        }
+
+        /* Código */
+        .terceirizados-table .col-codigo {
+            grid-column: 1;
+
+            font-weight: 700;
+            color: #344054;
+            font-size: 14px;
+        }
+
+        /* Nome da terceirizada */
+        .terceirizados-table .col-terceirizado {
+            grid-column: 1 / -1;
+
+            color: #101828;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Responsável */
+        .terceirizados-table .col-responsavel {
+            grid-column: 1;
+
+            color: #667085;
+        }
+
+        /* Cidade */
+        .terceirizados-table .col-cidade {
+            grid-column: 1;
+
+            color: #667085;
+        }
+
+        /* Funcionários */
+        .terceirizados-table .col-funcionarios {
+            grid-column: 1;
+
+            color: #667085;
+        }
+
+        /* Status */
+        .terceirizados-table .col-status {
+            grid-column: 2;
+            grid-row: 1 / span 4;
+
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+
+        /* Ações */
+        .terceirizados-table tbody td:last-child {
+            grid-column: 1 / -1;
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            padding-top: 8px;
+            margin-top: 4px;
+
+            border-top: 1px solid #eaecf0;
+        }
+
+        .terceirizados-table .btn-action {
+            flex: 1;
+
+            min-width: 90px;
+
+            text-align: center;
+        }
+
+    }
+
+    /* =========================================================
+   TERCEIRIZADOS - MOBILE
+   ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .terceirizados-table {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            overflow: visible !important;
+        }
+
+        .terceirizados-table thead {
+            display: none !important;
+        }
+
+        .terceirizados-table tbody {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        .terceirizados-table tbody tr {
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+
+            width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+
+            padding: 15px !important;
+            gap: 7px 12px !important;
+
+            border: 1px solid #e4e7ec !important;
+            border-radius: 12px !important;
+
+            background: #ffffff !important;
+
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05) !important;
+        }
+
+        .terceirizados-table tbody td {
+            display: block !important;
+
+            width: auto !important;
+            min-width: 0 !important;
+
+            padding: 0 !important;
+            border: none !important;
+
+            box-sizing: border-box !important;
+
+            font-size: 13px !important;
+            line-height: 1.4 !important;
+
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+        }
+
+        .terceirizados-table .col-codigo {
+            grid-column: 1 !important;
+
+            font-weight: 700 !important;
+            color: #344054 !important;
+            font-size: 14px !important;
+        }
+
+        .terceirizados-table .col-terceirizado {
+            grid-column: 1 / -1 !important;
+
+            color: #101828 !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+        }
+
+        .terceirizados-table .col-responsavel,
+        .terceirizados-table .col-cidade,
+        .terceirizados-table .col-funcionarios {
+            grid-column: 1 !important;
+            color: #667085 !important;
+        }
+
+        .terceirizados-table .col-status {
+            grid-column: 2 !important;
+            grid-row: 1 / span 4 !important;
+
+            display: flex !important;
+            align-items: flex-start !important;
+            justify-content: flex-end !important;
+        }
+
+        .terceirizados-table tbody td:last-child {
+            grid-column: 1 / -1 !important;
+
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+
+            padding-top: 10px !important;
+            margin-top: 4px !important;
+
+            border-top: 1px solid #eaecf0 !important;
+        }
+
+        .terceirizados-table .btn-action {
+            flex: 1 1 90px !important;
+            min-width: 90px !important;
+            text-align: center !important;
+        }
+
+    }
+
+    /* =========================================================
+   PRODUTOS - MOBILE
+   ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .produtos-table {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            overflow: visible !important;
+        }
+
+        .produtos-table thead {
+            display: none !important;
+        }
+
+        .produtos-table tbody {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        .produtos-table tbody tr {
+            display: grid !important;
+
+            grid-template-columns: 1fr auto !important;
+
+            width: 100% !important;
+            min-width: 0 !important;
+
+            box-sizing: border-box !important;
+
+            padding: 15px !important;
+
+            gap: 7px 12px !important;
+
+            border: 1px solid #e4e7ec !important;
+            border-radius: 12px !important;
+
+            background: #ffffff !important;
+
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05) !important;
+        }
+
+        .produtos-table tbody td {
+            display: block !important;
+
+            width: auto !important;
+            min-width: 0 !important;
+
+            padding: 0 !important;
+
+            border: none !important;
+
+            box-sizing: border-box !important;
+
+            font-size: 13px !important;
+            line-height: 1.4 !important;
+
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+        }
+
+        /* Código */
+        .produtos-table .col-codigo {
+            grid-column: 1 !important;
+
+            font-size: 14px !important;
+            font-weight: 700 !important;
+
+            color: #344054 !important;
+        }
+
+        /* Nome do produto */
+        .produtos-table .col-produto {
+            grid-column: 1 / -1 !important;
+
+            font-size: 15px !important;
+            font-weight: 600 !important;
+
+            color: #101828 !important;
+        }
+
+        /* Linha e categoria */
+        .produtos-table .col-linha,
+        .produtos-table .col-categoria {
+            grid-column: 1 !important;
+
+            color: #667085 !important;
+        }
+
+        /* Tamanhos */
+        .produtos-table .col-tamanhos {
+            grid-column: 1 !important;
+
+            color: #667085 !important;
+        }
+
+        /* Tempo médio */
+        .produtos-table .col-tempo {
+            grid-column: 1 !important;
+
+            color: #667085 !important;
+        }
+
+        /* Status */
+        .produtos-table .col-status {
+            grid-column: 2 !important;
+            grid-row: 1 / span 5 !important;
+
+            display: flex !important;
+
+            align-items: flex-start !important;
+            justify-content: flex-end !important;
+        }
+
+        /* Ações */
+        .produtos-table tbody td:last-child {
+            grid-column: 1 / -1 !important;
+
+            display: flex !important;
+
+            flex-wrap: wrap !important;
+
+            gap: 8px !important;
+
+            padding-top: 10px !important;
+            margin-top: 4px !important;
+
+            border-top: 1px solid #eaecf0 !important;
+        }
+
+        .produtos-table .btn-action {
+            flex: 1 1 90px !important;
+
+            min-width: 90px !important;
+
+            text-align: center !important;
+        }
+
+    }
+
+    /* =========================================================
+   PRODUÇÃO - MOBILE
+   ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .producoes-table {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            overflow: visible !important;
+        }
+
+        .producoes-table thead {
+            display: none !important;
+        }
+
+        .producoes-table tbody {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        .producoes-table tbody tr[data-status] {
+            display: grid !important;
+
+            grid-template-columns: 1fr auto !important;
+
+            width: 100% !important;
+            min-width: 0 !important;
+
+            box-sizing: border-box !important;
+
+            padding: 15px !important;
+
+            gap: 7px 12px !important;
+
+            border: 1px solid #e4e7ec !important;
+            border-radius: 12px !important;
+
+            background: #ffffff !important;
+
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05) !important;
+        }
+
+        .producoes-table tbody td {
+            display: block !important;
+
+            width: auto !important;
+            min-width: 0 !important;
+
+            padding: 0 !important;
+
+            border: none !important;
+
+            box-sizing: border-box !important;
+
+            font-size: 13px !important;
+            line-height: 1.4 !important;
+
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+        }
+
+        /* Código da produção */
+        .producoes-table .col-codigo {
+            grid-column: 1 !important;
+
+            font-size: 14px !important;
+            font-weight: 700 !important;
+
+            color: #344054 !important;
+        }
+
+        /* Produto */
+        .producoes-table .col-produto {
+            grid-column: 1 / -1 !important;
+
+            font-size: 15px !important;
+            font-weight: 600 !important;
+
+            color: #101828 !important;
+        }
+
+        /* Terceirizada */
+        .producoes-table .col-terceirizada {
+            grid-column: 1 / -1 !important;
+
+            color: #475467 !important;
+        }
+
+        /* Quantidade */
+        .producoes-table .col-quantidade {
+            grid-column: 1 !important;
+
+            color: #667085 !important;
+        }
+
+        /* Data de envio */
+        .producoes-table .col-envio {
+            grid-column: 1 !important;
+
+            color: #667085 !important;
+        }
+
+        /* Previsão de entrega */
+        .producoes-table .col-previsao {
+            grid-column: 1 !important;
+
+            color: #667085 !important;
+        }
+
+        /* Status */
+        .producoes-table .col-status {
+            grid-column: 2 !important;
+            grid-row: 1 / span 6 !important;
+
+            display: flex !important;
+
+            align-items: flex-start !important;
+            justify-content: flex-end !important;
+
+            text-align: right !important;
+        }
+
+        /* Ações */
+        .producoes-table tbody tr[data-status] td:last-child {
+            grid-column: 1 / -1 !important;
+
+            display: flex !important;
+            flex-wrap: wrap !important;
+
+            gap: 8px !important;
+
+            padding-top: 10px !important;
+            margin-top: 4px !important;
+
+            border-top: 1px solid #eaecf0 !important;
+        }
+
+        .producoes-table .btn-action {
+            flex: 1 1 90px !important;
+
+            min-width: 90px !important;
+
+            text-align: center !important;
+        }
+
+        /* Mensagem quando não existem produções */
+        .producoes-table tbody tr:not([data-status]) td {
+            display: block !important;
+
+            width: 100% !important;
+
+            text-align: center !important;
+
+            padding: 20px 10px !important;
+        }
+
+    }
+    /* Informações dos cards de produção */
+
+.producoes-table .mobile-info-label {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #667085;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.producoes-table .mobile-info-value {
+    display: block;
+
+    color: #344054;
+
+    font-size: 13px;
+    font-weight: 500;
+}   
+
+/* =========================================================
+   PREVISÃO E COLETA - MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .previsoes-table {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        overflow: visible !important;
+    }
+
+    .previsoes-table thead {
+        display: none !important;
+    }
+
+    .previsoes-table tbody {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    .previsoes-table tbody tr[data-situacao] {
+    display: grid !important;
+
+    grid-template-columns: 1fr auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+
+    padding: 15px !important;
+
+    gap: 9px 12px !important;
+
+    border: 1px solid #e4e7ec !important;
+    border-radius: 12px !important;
+
+    background: #ffffff !important;
+
+    box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05) !important;
+}
+
+/* CORREÇÃO DOS FILTROS */
+
+.previsoes-table tbody tr[data-situacao][style*="display: none"] {
+    display: none !important;
+}
+
+    .previsoes-table tbody td {
+        display: block !important;
+
+        width: auto !important;
+        min-width: 0 !important;
+
+        padding: 0 !important;
+
+        border: none !important;
+
+        box-sizing: border-box !important;
+
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+    }
+
+    /* Produção */
+
+    .previsoes-table .col-producao {
+        grid-column: 1 !important;
+
+        font-size: 14px !important;
+        font-weight: 700 !important;
+
+        color: #344054 !important;
+    }
+
+    /* Produto */
+
+    .previsoes-table .col-produto {
+        grid-column: 1 / -1 !important;
+
+        font-size: 15px !important;
+        font-weight: 600 !important;
+
+        color: #101828 !important;
+    }
+
+    /* Terceirizada */
+
+    .previsoes-table .col-terceirizada {
+        grid-column: 1 / -1 !important;
+
+        color: #475467 !important;
+    }
+
+    /* Quantidade */
+
+    .previsoes-table .col-quantidade {
+        grid-column: 1 !important;
+
+        color: #667085 !important;
+    }
+
+    /* Datas */
+
+    .previsoes-table .col-envio,
+    .previsoes-table .col-previsao-original,
+    .previsoes-table .col-previsao-atual {
+        grid-column: 1 !important;
+
+        color: #667085 !important;
+    }
+
+    /* Prazo */
+
+    .previsoes-table .col-prazo {
+        grid-column: 2 !important;
+
+        grid-row: 1 / span 5 !important;
+
+        display: flex !important;
+
+        align-items: flex-start !important;
+        justify-content: flex-end !important;
+
+        text-align: right !important;
+    }
+
+    /* Peças */
+
+    .previsoes-table .col-pecas {
+        grid-column: 1 / -1 !important;
+
+        padding-top: 8px !important;
+        margin-top: 2px !important;
+
+        border-top: 1px solid #eaecf0 !important;
+    }
+
+    /* Coleta */
+
+    .previsoes-table .col-coleta {
+        grid-column: 1 / -1 !important;
+
+        padding-top: 2px !important;
+    }
+
+    /* Textos menores */
+
+    .previsoes-table tbody td small {
+        font-size: 11px !important;
+
+        line-height: 1.35 !important;
+    }
+
+    /* Nenhuma produção */
+
+    .previsoes-table tbody tr:not([data-situacao]) td {
+        display: block !important;
+
+        width: 100% !important;
+
+        text-align: center !important;
+
+        padding: 20px 10px !important;
+    }
+
+    /* Status */
+
+    .previsoes-table .status {
+        white-space: normal !important;
+
+        text-align: center !important;
+    }
+
+}
+
+/* =========================================================
+   RELATÓRIOS - MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* Resultado do relatório */
+
+    .relatorio-resultados {
+        padding: 14px !important;
+        overflow: hidden !important;
+    }
+
+    .relatorio-resultados .panel-header {
+        margin-bottom: 14px !important;
+    }
+
+    .relatorio-resultados .table-responsive,
+    .relatorio-desempenho .table-responsive {
+        overflow: visible !important;
+        width: 100% !important;
+    }
+
+    .relatorio-resultados .cronex-table,
+    .relatorio-desempenho .cronex-table {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        border: 0 !important;
+    }
+
+    .relatorio-resultados .cronex-table thead,
+    .relatorio-desempenho .cronex-table thead {
+        display: none !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody,
+    .relatorio-desempenho .cronex-table tbody {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    /* Cada produção vira um card */
+
+    .relatorio-resultados .cronex-table tbody tr {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+
+        margin-bottom: 12px !important;
+        padding: 14px !important;
+
+        border: 1px solid #e4e7ec !important;
+        border-radius: 12px !important;
+
+        background: #ffffff !important;
+
+        box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05) !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody td {
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+
+        padding: 8px 0 !important;
+
+        border: 0 !important;
+        border-bottom: 1px solid #f0f2f5 !important;
+
+        text-align: right !important;
+
+        font-size: 12px !important;
+        line-height: 1.35 !important;
+
+        gap: 12px !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody td:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody td::before {
+        flex: 0 0 auto !important;
+
+        color: #667085 !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+
+        text-align: left !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(1)::before {
+        content: "Produção";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(2)::before {
+        content: "Produto";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(3)::before {
+        content: "Terceirizada";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(4)::before {
+        content: "Quantidade";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(5)::before {
+        content: "Envio";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(6)::before {
+        content: "Previsão";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(7)::before {
+        content: "Situação";
+    }
+
+    .relatorio-resultados .cronex-table tbody td:nth-child(8)::before {
+        content: "Coleta";
+    }
+
+    .relatorio-resultados .cronex-table tbody td > * {
+        max-width: 65% !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody td strong {
+        font-size: 12px !important;
+    }
+
+    .relatorio-resultados .cronex-table tbody td small {
+        font-size: 10px !important;
+    }
+
+    /* Status */
+
+    .relatorio-resultados .status {
+        white-space: normal !important;
+        text-align: center !important;
+    }
+
+
+    /* =====================================================
+       DESEMPENHO POR TERCEIRIZADA
+       ===================================================== */
+
+    .relatorio-desempenho {
+        padding: 14px !important;
+        overflow: hidden !important;
+    }
+
+    .relatorio-desempenho .panel-header {
+        margin-bottom: 14px !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody tr {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+
+        margin-bottom: 12px !important;
+        padding: 14px !important;
+
+        border: 1px solid #e4e7ec !important;
+        border-radius: 12px !important;
+
+        background: #ffffff !important;
+
+        box-shadow: 0 3px 12px rgba(16, 24, 40, 0.05) !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody td {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+
+        padding: 8px 0 !important;
+
+        border: 0 !important;
+        border-bottom: 1px solid #f0f2f5 !important;
+
+        font-size: 12px !important;
+
+        gap: 12px !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody td::before {
+        flex: 0 0 auto !important;
+
+        color: #667085 !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+
+        text-align: left !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:nth-child(1)::before {
+        content: "Terceirizada";
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:nth-child(2)::before {
+        content: "Produções";
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:nth-child(3)::before {
+        content: "Peças";
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:nth-child(4)::before {
+        content: "Finalizadas";
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:nth-child(5)::before {
+        content: "Atrasos";
+    }
+
+    .relatorio-desempenho .cronex-table tbody td:nth-child(6)::before {
+        content: "Prazo confirmado";
+    }
+
+    .relatorio-desempenho .cronex-table tbody td > * {
+        max-width: 65% !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody td strong {
+        font-size: 12px !important;
+    }
+
+    .relatorio-desempenho .cronex-table tbody td small {
+        font-size: 10px !important;
+    }
+
+}   

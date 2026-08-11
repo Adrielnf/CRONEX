@@ -537,3 +537,23 @@ function abrirAba(evento, nomeAba) {
     }
 
 }
+
+function toggleMenuMobile() {
+    const menu = document.querySelector(".menu-mobile");
+    const botao = document.querySelector(".menu-mobile-toggle");
+    const icone = botao.querySelector("i");
+
+    if (!menu) {
+        return;
+    }
+
+    menu.classList.toggle("aberto");
+
+    if (menu.classList.contains("aberto")) {
+        icone.classList.remove("fa-bars");
+        icone.classList.add("fa-xmark");
+    } else {
+        icone.classList.remove("fa-xmark");
+        icone.classList.add("fa-bars");
+    }
+}
