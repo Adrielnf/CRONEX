@@ -116,8 +116,10 @@ $resultado = mysqli_query(
 );
 
 if (!$resultado) {
-    die("Erro ao carregar previsões: "
-        . mysqli_error($conexao));
+    die(
+        "Erro ao carregar previsões: "
+        . mysqli_error($conexao)
+    );
 }
 
 $hoje = date("Y-m-d");
@@ -148,8 +150,8 @@ while ($linha = mysqli_fetch_assoc($resultado)) {
         max(
             0,
             $linha["quantidade"]
-                -
-                $linha["quantidade_liberada"]
+            -
+            $linha["quantidade_liberada"]
         );
 
     $linha["finalizada"] =
@@ -270,11 +272,8 @@ function obterStatusVisualProducao($linha)
     <div class="app">
 
         <?php
-
         $base = "../";
-
         include "../includes/menu.php";
-
         ?>
 
         <main class="main-content">
@@ -449,240 +448,423 @@ function obterStatusVisualProducao($linha)
 
                     </div>
 
-                    <div class="table-toolbar">
-
-                        <input
-                            type="text"
-                            id="pesquisaPrevisao"
-                            placeholder="Pesquisar produção, produto ou terceirizada..."
-                            class="search-input">
-
-                        <select
-                            id="filtroSituacao"
-                            class="filter-select">
-
-                            <option value="">
-                                Todas as situações
-                            </option>
-
-                            <option value="aguardando">
-                                Aguardando confirmação
-                            </option>
-
-                            <option value="prazo">
-                                Dentro do prazo
-                            </option>
-
-                            <option value="atraso">
-                                Atraso informado
-                            </option>
-
-                            <option value="pronta">
-                                Pronta para coleta
-                            </option>
-
-                            <option value="coletado">
-                                Coletado
-                            </option>
-
-                        </select>
-
-                    </div>
+                </div>
 
 
-                    <div class="table-responsive">
+                <div class="table-toolbar">
 
-                        <table
-                            class="cronex-table previsoes-table"
-                            id="tabelaPrevisoes">
+                    <input
+                        type="text"
+                        id="pesquisaPrevisao"
+                        placeholder="Pesquisar produção, produto ou terceirizada..."
+                        class="search-input">
 
-                            <thead>
+                    <select
+                        id="filtroSituacao"
+                        class="filter-select">
 
-                                <tr>
+                        <option value="">
+                            Todas as situações
+                        </option>
 
-                                    <th>
-                                        Produção
-                                    </th>
+                        <option value="aguardando">
+                            Aguardando confirmação
+                        </option>
 
-                                    <th>
-                                        Produto
-                                    </th>
+                        <option value="prazo">
+                            Dentro do prazo
+                        </option>
 
-                                    <th>
-                                        Terceirizada
-                                    </th>
+                        <option value="atraso">
+                            Atraso informado
+                        </option>
 
-                                    <th>
-                                        Qtd.
-                                    </th>
+                        <option value="pronta">
+                            Pronta para coleta
+                        </option>
 
-                                    <th>
-                                        Envio
-                                    </th>
+                        <option value="coletado">
+                            Coletado
+                        </option>
 
-                                    <th>
-                                        Previsão Original
-                                    </th>
+                    </select>
 
-                                    <th>
-                                        Previsão Atual
-                                    </th>
-
-                                    <th>
-                                        Prazo
-                                    </th>
-
-                                    <th>
-                                        Peças
-                                    </th>
-
-                                    <th>
-                                        Coleta
-                                    </th>
-
-                                </tr>
-
-                            </thead>
+                </div>
 
 
-                            <tbody>
+                <div class="table-responsive">
 
-                                <?php if (count($producoes) > 0) { ?>
+                    <table
+                        class="cronex-table previsoes-table"
+                        id="tabelaPrevisoes">
 
-                                    <?php foreach ($producoes as $linha) { ?>
+                        <thead>
 
-                                        <?php
+                            <tr>
 
-                                        $previsaoAtual =
-                                            !empty($linha["nova_previsao"])
-                                            ? $linha["nova_previsao"]
-                                            : $linha["previsao_entrega"];
+                                <th>
+                                    Produção
+                                </th>
 
-                                        $situacaoFiltro = "aguardando";
+                                <th>
+                                    Produto
+                                </th>
 
-                                        if ($linha["finalizada"]) {
+                                <th>
+                                    Terceirizada
+                                </th>
 
-                                            $situacaoFiltro = "coletado";
-                                        } elseif ($linha["tem_coleta_pendente"]) {
+                                <th>
+                                    Qtd.
+                                </th>
 
-                                            $situacaoFiltro = "pronta";
-                                        } elseif (
-                                            $linha["confirmacao_prazo"]
-                                            === "Atraso"
-                                        ) {
+                                <th>
+                                    Envio
+                                </th>
 
-                                            $situacaoFiltro = "atraso";
-                                        } elseif (
-                                            $linha["confirmacao_prazo"]
-                                            === "No prazo"
-                                        ) {
+                                <th>
+                                    Previsão Original
+                                </th>
 
-                                            $situacaoFiltro = "prazo";
-                                        }
+                                <th>
+                                    Previsão Atual
+                                </th>
 
-                                        $statusVisual =
-                                            obterStatusVisualProducao(
-                                                $linha
-                                            );
+                                <th>
+                                    Prazo
+                                </th>
 
-                                        ?>
+                                <th>
+                                    Peças
+                                </th>
+
+                                <th>
+                                    Coleta
+                                </th>
+
+                            </tr>
+
+                        </thead>
 
 
-                                        <tr
-                                            data-situacao="<?= htmlspecialchars(
-                                                                $situacaoFiltro
-                                                            ) ?>">
+                        <tbody>
 
-                                            <td class="col-producao">
+                            <?php if (count($producoes) > 0) { ?>
 
-                                                <strong>
-                                                    <?= htmlspecialchars(
-                                                        $linha["codigo"]
+                                <?php foreach ($producoes as $linha) { ?>
+
+                                    <?php
+
+                                    $previsaoAtual =
+                                        !empty($linha["nova_previsao"])
+                                        ? $linha["nova_previsao"]
+                                        : $linha["previsao_entrega"];
+
+                                    $situacaoFiltro = "aguardando";
+
+                                    if ($linha["finalizada"]) {
+
+                                        $situacaoFiltro = "coletado";
+
+                                    } elseif ($linha["tem_coleta_pendente"]) {
+
+                                        $situacaoFiltro = "pronta";
+
+                                    } elseif (
+                                        $linha["confirmacao_prazo"]
+                                        === "Atraso"
+                                    ) {
+
+                                        $situacaoFiltro = "atraso";
+
+                                    } elseif (
+                                        $linha["confirmacao_prazo"]
+                                        === "No prazo"
+                                    ) {
+
+                                        $situacaoFiltro = "prazo";
+                                    }
+
+                                    $statusVisual =
+                                        obterStatusVisualProducao(
+                                            $linha
+                                        );
+
+                                    ?>
+
+
+                                    <tr
+                                        data-situacao="<?= htmlspecialchars(
+                                            $situacaoFiltro
+                                        ) ?>">
+
+                                        <td class="col-producao">
+
+                                            <strong>
+                                                <?= htmlspecialchars(
+                                                    $linha["codigo"]
+                                                ) ?>
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+
+                                                <?php if (
+                                                    $statusVisual === "Finalizada"
+                                                ) { ?>
+
+                                                    <i class="fa-solid fa-circle-check"></i>
+
+                                                <?php } elseif (
+                                                    $statusVisual === "Aguardando coleta"
+                                                ) { ?>
+
+                                                    <i class="fa-solid fa-truck"></i>
+
+                                                <?php } elseif (
+                                                    $statusVisual === "Aguardando confirmação"
+                                                ) { ?>
+
+                                                    <i class="fa-solid fa-clock"></i>
+
+                                                <?php } else { ?>
+
+                                                    <i class="fa-solid fa-shirt"></i>
+
+                                                <?php } ?>
+
+                                                <?= htmlspecialchars(
+                                                    $statusVisual
+                                                ) ?>
+
+                                            </small>
+
+                                        </td>
+
+
+                                        <td class="col-produto">
+
+                                            <strong>
+                                                <?= htmlspecialchars(
+                                                    $linha["produto_nome"]
+                                                ) ?>
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+                                                <?= htmlspecialchars(
+                                                    $linha["produto_codigo"]
+                                                ) ?>
+                                            </small>
+
+                                        </td>
+
+
+                                        <td class="col-terceirizada">
+
+                                            <strong>
+                                                <?= htmlspecialchars(
+                                                    $linha["terceirizado_nome"]
+                                                ) ?>
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+                                                <?= htmlspecialchars(
+                                                    $linha["terceirizado_codigo"]
+                                                ) ?>
+                                            </small>
+
+                                        </td>
+
+
+                                        <td class="col-quantidade">
+
+                                            <span class="mobile-info-label">
+                                                Quantidade
+                                            </span>
+
+                                            <span class="mobile-info-value">
+
+                                                <?= number_format(
+                                                    $linha["quantidade"],
+                                                    0,
+                                                    ",",
+                                                    "."
+                                                ) ?>
+
+                                                peças
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td class="col-envio">
+
+                                            <span class="mobile-info-label">
+                                                Data de envio
+                                            </span>
+
+                                            <span class="mobile-info-value">
+
+                                                <?= formatarDataCronex(
+                                                    $linha["data_envio"]
+                                                ) ?>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td class="col-previsao-original">
+
+                                            <span class="mobile-info-label">
+                                                Previsão original
+                                            </span>
+
+                                            <span class="mobile-info-value">
+
+                                                <?= formatarDataCronex(
+                                                    $linha["previsao_entrega"]
+                                                ) ?>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td class="col-previsao-atual">
+
+                                            <span class="mobile-info-label">
+                                                Previsão atual
+                                            </span>
+
+                                            <span class="mobile-info-value">
+
+                                                <?php if (
+                                                    !empty($linha["nova_previsao"])
+                                                ) { ?>
+
+                                                    <strong>
+
+                                                        <?= formatarDataCronex(
+                                                            $linha["nova_previsao"]
+                                                        ) ?>
+
+                                                    </strong>
+
+                                                    <br>
+
+                                                    <small>
+                                                        Alterada pela terceirizada
+                                                    </small>
+
+                                                <?php } else { ?>
+
+                                                    <?= formatarDataCronex(
+                                                        $linha["previsao_entrega"]
                                                     ) ?>
-                                                </strong>
 
-                                                <br>
+                                                <?php } ?>
 
-                                                <small>
+                                            </span>
 
-                                                    <?php if (
-                                                        $statusVisual === "Finalizada"
-                                                    ) { ?>
-
-                                                        <i class="fa-solid fa-circle-check"></i>
-
-                                                    <?php } elseif (
-                                                        $statusVisual === "Aguardando coleta"
-                                                    ) { ?>
-
-                                                        <i class="fa-solid fa-truck"></i>
-
-                                                    <?php } elseif (
-                                                        $statusVisual === "Aguardando confirmação"
-                                                    ) { ?>
-
-                                                        <i class="fa-solid fa-clock"></i>
-
-                                                    <?php } else { ?>
-
-                                                        <i class="fa-solid fa-shirt"></i>
-
-                                                    <?php } ?>
-
-                                                    <?= htmlspecialchars(
-                                                        $statusVisual
-                                                    ) ?>
-
-                                                </small>
-
-                                            </td>
+                                        </td>
 
 
-                                            <td class="col-produto">
+                                        <td class="col-prazo">
 
-                                                <strong>
-                                                    <?= htmlspecialchars(
-                                                        $linha["produto_nome"]
-                                                    ) ?>
-                                                </strong>
+                                            <?php if (
+                                                $linha["confirmacao_prazo"]
+                                                === "No prazo"
+                                            ) { ?>
 
-                                                <br>
-
-                                                <small>
-                                                    <?= htmlspecialchars(
-                                                        $linha["produto_codigo"]
-                                                    ) ?>
-                                                </small>
-
-                                            </td>
-
-
-                                            <td class="col-terceirizada">
-
-                                                <strong>
-                                                    <?= htmlspecialchars(
-                                                        $linha["terceirizado_nome"]
-                                                    ) ?>
-                                                </strong>
-
-                                                <br>
-
-                                                <small>
-                                                    <?= htmlspecialchars(
-                                                        $linha["terceirizado_codigo"]
-                                                    ) ?>
-                                                </small>
-
-                                            </td>
-
-
-                                            <td class="col-quantidade">
-
-                                                <span class="mobile-info-label">
-                                                    Quantidade
+                                                <span class="status concluido">
+                                                    No prazo
                                                 </span>
 
-                                                <span class="mobile-info-value">
+                                            <?php } elseif (
+                                                $linha["confirmacao_prazo"]
+                                                === "Atraso"
+                                            ) { ?>
+
+                                                <span class="status atraso">
+                                                    Atraso informado
+                                                </span>
+
+                                                <?php if (
+                                                    !empty($linha["motivo_atraso"])
+                                                ) { ?>
+
+                                                    <br>
+
+                                                    <small
+                                                        title="<?= htmlspecialchars(
+                                                            $linha["motivo_atraso"]
+                                                        ) ?>">
+
+                                                        <?= htmlspecialchars(
+                                                            $linha["motivo_atraso"]
+                                                        ) ?>
+
+                                                    </small>
+
+                                                <?php } ?>
+
+                                            <?php } else { ?>
+
+                                                <?php if (
+                                                    !empty($previsaoAtual) &&
+                                                    $previsaoAtual < $hoje
+                                                ) { ?>
+
+                                                    <span class="status atraso">
+                                                        Sem confirmação
+                                                    </span>
+
+                                                <?php } else { ?>
+
+                                                    <span class="status pendente">
+                                                        Aguardando
+                                                    </span>
+
+                                                <?php } ?>
+
+                                            <?php } ?>
+
+                                        </td>
+
+
+                                        <td class="col-pecas">
+
+                                            <span class="mobile-info-label">
+                                                Peças
+                                            </span>
+
+                                            <?php if (
+                                                $linha["finalizada"]
+                                            ) { ?>
+
+                                                <span class="status concluido">
+                                                    100% concluídas
+                                                </span>
+
+                                                <br>
+
+                                                <small>
+
+                                                    <?= number_format(
+                                                        $linha["quantidade"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
+
+                                                    de
 
                                                     <?= number_format(
                                                         $linha["quantidade"],
@@ -693,349 +875,147 @@ function obterStatusVisualProducao($linha)
 
                                                     peças
 
-                                                </span>
+                                                </small>
 
-                                            </td>
+                                            <?php } elseif (
+                                                $linha["quantidade_liberada"] > 0
+                                            ) { ?>
 
+                                                <span class="status pendente">
 
-                                            <td class="col-envio">
-
-                                                <span class="mobile-info-label">
-                                                    Data de envio
-                                                </span>
-
-                                                <span class="mobile-info-value">
-
-                                                    <?= formatarDataCronex(
-                                                        $linha["data_envio"]
+                                                    <?= number_format(
+                                                        $linha["quantidade_liberada"],
+                                                        0,
+                                                        ",",
+                                                        "."
                                                     ) ?>
 
+                                                    liberadas
+
                                                 </span>
 
-                                            </td>
+                                                <br>
 
+                                                <small>
 
-                                            <td class="col-previsao-original">
-
-                                                <span class="mobile-info-label">
-                                                    Previsão original
-                                                </span>
-
-                                                <span class="mobile-info-value">
-
-                                                    <?= formatarDataCronex(
-                                                        $linha["previsao_entrega"]
+                                                    <?= number_format(
+                                                        $linha["quantidade_restante"],
+                                                        0,
+                                                        ",",
+                                                        "."
                                                     ) ?>
 
+                                                    ainda em produção
+
+                                                </small>
+
+                                            <?php } else { ?>
+
+                                                <span class="status pendente">
+                                                    Em produção
                                                 </span>
 
-                                            </td>
+                                                <br>
+
+                                                <small>
+
+                                                    <?= number_format(
+                                                        $linha["quantidade"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
+
+                                                    peças restantes
+
+                                                </small>
+
+                                            <?php } ?>
+
+                                        </td>
 
 
-                                            <td class="col-previsao-atual">
+                                        <td class="col-coleta">
 
-                                                <span class="mobile-info-label">
-                                                    Previsão atual
+                                            <span class="mobile-info-label">
+                                                Coleta
+                                            </span>
+
+                                            <?php if (
+                                                $linha["finalizada"]
+                                            ) { ?>
+
+                                                <span class="status concluido">
+                                                    Coletado
                                                 </span>
 
-                                                <span class="mobile-info-value">
+                                                <br>
 
-                                                    <?php if (
-                                                        !empty($linha["nova_previsao"])
-                                                    ) { ?>
+                                                <small>
 
-                                                        <strong>
+                                                    <?= number_format(
+                                                        $linha["quantidade_coletada"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
 
-                                                            <?= formatarDataCronex(
-                                                                $linha["nova_previsao"]
-                                                            ) ?>
+                                                    de
 
-                                                        </strong>
+                                                    <?= number_format(
+                                                        $linha["quantidade"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
 
-                                                        <br>
+                                                    peças
 
-                                                        <small>
-                                                            Alterada pela terceirizada
-                                                        </small>
-
-                                                    <?php } else { ?>
-
-                                                        <?= formatarDataCronex(
-                                                            $linha["previsao_entrega"]
-                                                        ) ?>
-
-                                                    <?php } ?>
-
-                                                </span>
-
-                                            </td>
-
-
-                                            <td class="col-prazo">
+                                                </small>
 
                                                 <?php if (
-                                                    $linha["confirmacao_prazo"]
-                                                    === "No prazo"
+                                                    !empty($linha["ultima_coleta"])
                                                 ) { ?>
-
-                                                    <span class="status concluido">
-                                                        No prazo
-                                                    </span>
-
-                                                <?php } elseif (
-                                                    $linha["confirmacao_prazo"]
-                                                    === "Atraso"
-                                                ) { ?>
-
-                                                    <span class="status atraso">
-                                                        Atraso informado
-                                                    </span>
-
-                                                    <?php if (
-                                                        !empty($linha["motivo_atraso"])
-                                                    ) { ?>
-
-                                                        <br>
-
-                                                        <small
-                                                            title="<?= htmlspecialchars(
-                                                                        $linha["motivo_atraso"]
-                                                                    ) ?>">
-
-                                                            <?= htmlspecialchars(
-                                                                $linha["motivo_atraso"]
-                                                            ) ?>
-
-                                                        </small>
-
-                                                    <?php } ?>
-
-                                                <?php } else { ?>
-
-                                                    <?php if (
-                                                        !empty($previsaoAtual) &&
-                                                        $previsaoAtual < $hoje
-                                                    ) { ?>
-
-                                                        <span class="status atraso">
-                                                            Sem confirmação
-                                                        </span>
-
-                                                    <?php } else { ?>
-
-                                                        <span class="status pendente">
-                                                            Aguardando
-                                                        </span>
-
-                                                    <?php } ?>
-
-                                                <?php } ?>
-
-                                            </td>
-
-
-                                            <td class="col-pecas">
-
-                                                <span class="mobile-info-label">
-                                                    Peças
-                                                </span>
-
-                                                <?php if (
-                                                    $linha["finalizada"]
-                                                ) { ?>
-
-                                                    <span class="status concluido">
-                                                        100% concluídas
-                                                    </span>
 
                                                     <br>
 
                                                     <small>
 
-                                                        <?= number_format(
-                                                            $linha["quantidade"],
-                                                            0,
-                                                            ",",
-                                                            "."
+                                                        <?= formatarDataHoraCronex(
+                                                            $linha["ultima_coleta"]
                                                         ) ?>
-
-                                                        de
-
-                                                        <?= number_format(
-                                                            $linha["quantidade"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        peças
-
-                                                    </small>
-
-                                                <?php } elseif (
-                                                    $linha["quantidade_liberada"] > 0
-                                                ) { ?>
-
-                                                    <span class="status pendente">
-
-                                                        <?= number_format(
-                                                            $linha["quantidade_liberada"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        liberadas
-
-                                                    </span>
-
-                                                    <br>
-
-                                                    <small>
-
-                                                        <?= number_format(
-                                                            $linha["quantidade_restante"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        ainda em produção
-
-                                                    </small>
-
-                                                <?php } else { ?>
-
-                                                    <span class="status pendente">
-                                                        Em produção
-                                                    </span>
-
-                                                    <br>
-
-                                                    <small>
-
-                                                        <?= number_format(
-                                                            $linha["quantidade"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        peças restantes
 
                                                     </small>
 
                                                 <?php } ?>
 
-                                            </td>
+                                            <?php } elseif (
+                                                $linha["quantidade_aguardando"] > 0
+                                            ) { ?>
 
-
-                                            <td class="col-coleta">
-
-                                                <span class="mobile-info-label">
-                                                    Coleta
+                                                <span class="status pendente">
+                                                    Aguardando coleta
                                                 </span>
 
+                                                <br>
+
+                                                <small>
+
+                                                    <?= number_format(
+                                                        $linha["quantidade_aguardando"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
+
+                                                    peças disponíveis
+
+                                                </small>
+
                                                 <?php if (
-                                                    $linha["finalizada"]
-                                                ) { ?>
-
-                                                    <span class="status concluido">
-                                                        Coletado
-                                                    </span>
-
-                                                    <br>
-
-                                                    <small>
-
-                                                        <?= number_format(
-                                                            $linha["quantidade_coletada"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        de
-
-                                                        <?= number_format(
-                                                            $linha["quantidade"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        peças
-
-                                                    </small>
-
-                                                    <?php if (
-                                                        !empty($linha["ultima_coleta"])
-                                                    ) { ?>
-
-                                                        <br>
-
-                                                        <small>
-
-                                                            <?= formatarDataHoraCronex(
-                                                                $linha["ultima_coleta"]
-                                                            ) ?>
-
-                                                        </small>
-
-                                                    <?php } ?>
-
-                                                <?php } elseif (
-                                                    $linha["quantidade_aguardando"] > 0
-                                                ) { ?>
-
-                                                    <span class="status pendente">
-                                                        Aguardando coleta
-                                                    </span>
-
-                                                    <br>
-
-                                                    <small>
-
-                                                        <?= number_format(
-                                                            $linha["quantidade_aguardando"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        peças disponíveis
-
-                                                    </small>
-
-                                                    <?php if (
-                                                        $linha["quantidade_coletada"] > 0
-                                                    ) { ?>
-
-                                                        <br>
-
-                                                        <small>
-
-                                                            <?= number_format(
-                                                                $linha["quantidade_coletada"],
-                                                                0,
-                                                                ",",
-                                                                "."
-                                                            ) ?>
-
-                                                            já coletadas
-
-                                                        </small>
-
-                                                    <?php } ?>
-
-                                                <?php } elseif (
                                                     $linha["quantidade_coletada"] > 0
                                                 ) { ?>
 
-                                                    <span class="status pendente">
-                                                        Coleta parcial
-                                                    </span>
-
                                                     <br>
 
                                                     <small>
@@ -1047,42 +1027,51 @@ function obterStatusVisualProducao($linha)
                                                             "."
                                                         ) ?>
 
-                                                        de
-
-                                                        <?= number_format(
-                                                            $linha["quantidade"],
-                                                            0,
-                                                            ",",
-                                                            "."
-                                                        ) ?>
-
-                                                        coletadas
+                                                        já coletadas
 
                                                     </small>
 
-                                                <?php } else { ?>
-
-                                                    <span class="status pendente">
-                                                        Pendente
-                                                    </span>
-
                                                 <?php } ?>
 
-                                            </td>
+                                            <?php } elseif (
+                                                $linha["quantidade_coletada"] > 0
+                                            ) { ?>
 
-                                        </tr>
+                                                <span class="status pendente">
+                                                    Coleta parcial
+                                                </span>
 
-                                    <?php } ?>
+                                                <br>
 
-                                <?php } else { ?>
+                                                <small>
 
-                                    <tr>
+                                                    <?= number_format(
+                                                        $linha["quantidade_coletada"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
 
-                                        <td
-                                            colspan="10"
-                                            style="text-align: center;">
+                                                    de
 
-                                            Nenhuma produção encontrada.
+                                                    <?= number_format(
+                                                        $linha["quantidade"],
+                                                        0,
+                                                        ",",
+                                                        "."
+                                                    ) ?>
+
+                                                    coletadas
+
+                                                </small>
+
+                                            <?php } else { ?>
+
+                                                <span class="status pendente">
+                                                    Pendente
+                                                </span>
+
+                                            <?php } ?>
 
                                         </td>
 
@@ -1090,11 +1079,27 @@ function obterStatusVisualProducao($linha)
 
                                 <?php } ?>
 
-                            </tbody>
+                            <?php } else { ?>
 
-                        </table>
+                                <tr>
 
-                    </div>
+                                    <td
+                                        colspan="10"
+                                        style="text-align: center;">
+
+                                        Nenhuma produção encontrada.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </section>
 
@@ -1104,6 +1109,7 @@ function obterStatusVisualProducao($linha)
 
 
     <script>
+
         const pesquisaPrevisao =
             document.getElementById(
                 "pesquisaPrevisao"
@@ -1187,7 +1193,9 @@ function obterStatusVisualProducao($linha)
             "change",
             filtrarPrevisoes
         );
+
     </script>
+
 
     <script src="../js/script.js"></script>
 

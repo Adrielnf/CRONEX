@@ -1633,4 +1633,4 @@ function obterSituacaoRelatorio($linha)
 
 </body>
 
-</html>
+</html
