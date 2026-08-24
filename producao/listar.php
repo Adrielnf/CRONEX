@@ -212,9 +212,11 @@ $resultado = mysqli_query($conexao, $sql);
                 </div>
 
 
-                <table
-                    class="cronex-table producoes-table"
-                    id="tabelaProducoes">
+                <div class="table-responsive">
+
+                    <table
+                        class="cronex-table producoes-table"
+                        id="tabelaProducoes">
 
                     <thead>
 
@@ -468,7 +470,9 @@ $resultado = mysqli_query($conexao, $sql);
 
                     </tbody>
 
-                </table>
+                    </table>
+
+                </div>
 
             </section>
 

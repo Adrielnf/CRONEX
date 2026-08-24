@@ -18,7 +18,9 @@ $resultado = mysqli_query($conexao, $sql);
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Cronex - Terceirizados</title>
 
@@ -26,7 +28,9 @@ $resultado = mysqli_query($conexao, $sql);
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <link rel="stylesheet" href="../css/style.css?v=3">
+    <link
+        rel="stylesheet"
+        href="../css/style.css?v=3">
 
 </head>
 
@@ -110,7 +114,9 @@ $resultado = mysqli_query($conexao, $sql);
                     <a
                         href="cadastrar.php"
                         class="btn-primary">
+
                         + Novo Terceirizado
+
                     </a>
 
                 </div>
@@ -142,143 +148,155 @@ $resultado = mysqli_query($conexao, $sql);
                 </div>
 
 
-                <table class="cronex-table terceirizados-table">
+                <!--
+                    Container responsável por impedir que a tabela
+                    ultrapasse a largura disponível quando houver zoom.
+                -->
+                <div class="table-responsive">
 
-                    <thead>
+                    <table class="cronex-table terceirizados-table">
 
-                        <tr>
-
-                            <th>
-                                Código
-                            </th>
-
-                            <th>
-                                Terceirizado
-                            </th>
-
-                            <th>
-                                Responsável
-                            </th>
-
-                            <th>
-                                Cidade
-                            </th>
-
-                            <th>
-                                Funcionários
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Ações
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        <?php while ($linha = mysqli_fetch_assoc($resultado)) { ?>
+                        <thead>
 
                             <tr>
 
-                                <td class="col-codigo">
+                                <th>
+                                    Código
+                                </th>
 
-                                    <?= htmlspecialchars(
-                                        $linha["codigo"]
-                                    ) ?>
+                                <th>
+                                    Terceirizado
+                                </th>
 
-                                </td>
+                                <th>
+                                    Responsável
+                                </th>
 
+                                <th>
+                                    Cidade
+                                </th>
 
-                                <td class="col-terceirizado">
+                                <th>
+                                    Funcionários
+                                </th>
 
-                                    <?= htmlspecialchars(
-                                        $linha["razao_social"]
-                                    ) ?>
+                                <th>
+                                    Status
+                                </th>
 
-                                </td>
-
-
-                                <td class="col-responsavel">
-
-                                    <?= htmlspecialchars(
-                                        $linha["responsavel"]
-                                    ) ?>
-
-                                </td>
-
-
-                                <td class="col-cidade">
-
-                                    <?= htmlspecialchars(
-                                        $linha["cidade"]
-                                    ) ?>
-
-                                </td>
-
-
-                                <td class="col-funcionarios">
-
-                                    <?= htmlspecialchars(
-                                        $linha["funcionarios"]
-                                    ) ?>
-
-                                </td>
-
-
-                                <td class="col-status">
-
-                                    <?php if ($linha["status"] == "Ativo") { ?>
-
-                                        <span class="status concluido">
-                                            Ativo
-                                        </span>
-
-                                    <?php } else { ?>
-
-                                        <span class="status atraso">
-                                            Inativo
-                                        </span>
-
-                                    <?php } ?>
-
-                                </td>
-
-
-                                <td>
-
-                                    <a
-                                        href="editar.php?id=<?= $linha["id"] ?>"
-                                        class="btn-action edit">
-                                        Editar
-                                    </a>
-
-
-                                    <?php if ($linha["status"] == "Ativo") { ?>
-
-                                        <a
-                                            href="excluir.php?id=<?= $linha["id"] ?>"
-                                            class="btn-action delete">
-                                            Inativar
-                                        </a>
-
-                                    <?php } ?>
-
-                                </td>
+                                <th>
+                                    Ações
+                                </th>
 
                             </tr>
 
-                        <?php } ?>
+                        </thead>
 
-                    </tbody>
 
-                </table>
+                        <tbody>
+
+                            <?php while ($linha = mysqli_fetch_assoc($resultado)) { ?>
+
+                                <tr>
+
+                                    <td class="col-codigo">
+
+                                        <?= htmlspecialchars(
+                                            $linha["codigo"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-terceirizado">
+
+                                        <?= htmlspecialchars(
+                                            $linha["razao_social"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-responsavel">
+
+                                        <?= htmlspecialchars(
+                                            $linha["responsavel"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-cidade">
+
+                                        <?= htmlspecialchars(
+                                            $linha["cidade"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-funcionarios">
+
+                                        <?= htmlspecialchars(
+                                            $linha["funcionarios"]
+                                        ) ?>
+
+                                    </td>
+
+
+                                    <td class="col-status">
+
+                                        <?php if ($linha["status"] == "Ativo") { ?>
+
+                                            <span class="status concluido">
+                                                Ativo
+                                            </span>
+
+                                        <?php } else { ?>
+
+                                            <span class="status atraso">
+                                                Inativo
+                                            </span>
+
+                                        <?php } ?>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+                                            href="editar.php?id=<?= $linha["id"] ?>"
+                                            class="btn-action edit">
+
+                                            Editar
+
+                                        </a>
+
+
+                                        <?php if ($linha["status"] == "Ativo") { ?>
+
+                                            <a
+                                                href="excluir.php?id=<?= $linha["id"] ?>"
+                                                class="btn-action delete">
+
+                                                Inativar
+
+                                            </a>
+
+                                        <?php } ?>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php } ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
 
             </section>
