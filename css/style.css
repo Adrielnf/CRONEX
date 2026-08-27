@@ -4545,3 +4545,93 @@
         }
 
     }
+
+    .alerta-atraso-producao {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-top: 16px;
+    padding: 14px 16px;
+
+    border: 1px solid #f3b4b4;
+    border-radius: 12px;
+
+    background: #fff5f5;
+    color: #b42318;
+}
+
+.alerta-atraso-producao > i {
+    margin-top: 2px;
+    font-size: 18px;
+    color: #d92d20;
+}
+
+.alerta-atraso-producao strong {
+    display: block;
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.alerta-atraso-producao p {
+    margin: 0 0 4px;
+
+    font-size: 13px;
+    line-height: 1.4;
+    color: #b42318;
+}
+
+.alerta-atraso-producao span {
+    display: block;
+
+    font-size: 13px;
+    font-weight: 700;
+    color: #b42318;
+}
+
+/* =========================================================
+   ALERTA DE COLETA ATRASADA
+   ========================================================= */
+
+.alerta-atraso-coleta {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-bottom: 16px;
+    padding: 14px 16px;
+
+    border: 1px solid #f3b4b4;
+    border-radius: 12px;
+
+    background: #fff5f5;
+    color: #b42318;
+}
+
+.alerta-atraso-coleta > i {
+    margin-top: 2px;
+
+    font-size: 18px;
+
+    color: #d92d20;
+}
+
+.alerta-atraso-coleta strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.alerta-atraso-coleta span {
+    display: block;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    color: #b42318;
+}

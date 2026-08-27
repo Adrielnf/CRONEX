@@ -189,6 +189,9 @@ $finalizados = 0;
 
 foreach ($producoes as $producao) {
 
+    /*
+     * Produção já coletada
+     */
     if ($producao["coletado"] === "Sim") {
 
         $finalizados++;
@@ -196,20 +199,57 @@ foreach ($producoes as $producao) {
         continue;
     }
 
-    if (empty($producao["confirmacao_prazo"])) {
+
+    /*
+     * Verifica se a produção está atrasada.
+     *
+     * Se existir uma nova previsão, usamos ela.
+     * Caso contrário, usamos a previsão original.
+     */
+    $previsaoAtual =
+        !empty($producao["nova_previsao"])
+        ? $producao["nova_previsao"]
+        : $producao["previsao_entrega"];
+
+
+    $atrasada = false;
+
+
+    if (
+        !empty($previsaoAtual) &&
+        $previsaoAtual < date("Y-m-d") &&
+        $producao["quantidade_restante"] > 0
+    ) {
+
+        $atrasada = true;
+    }
+
+
+    /*
+     * Precisa da atenção:
+     *
+     * 1. Ainda não confirmou o prazo
+     * OU
+     * 2. A produção está atrasada
+     */
+    if (
+        empty($producao["confirmacao_prazo"]) ||
+        $atrasada
+    ) {
 
         $precisaAcao++;
-
-        continue;
     }
+
 
     /*
      * Enquanto ainda existir saldo não liberado,
      * a produção continua aparecendo como "Em produção".
      */
     if ($producao["quantidade_restante"] > 0) {
+
         $emProducao++;
     }
+
 
     /*
      * Existe coleta aguardando quando a quantidade
@@ -219,12 +259,12 @@ foreach ($producoes as $producao) {
         $producao["quantidade_liberada"]
         > $producao["quantidade_coletada"]
     ) {
+
         $aguardandoColeta +=
             $producao["quantidade_liberada"]
             - $producao["quantidade_coletada"];
     }
 }
-
 
 /* =========================================================
    MENSAGENS
@@ -463,11 +503,10 @@ $erro = isset($_GET["erro"])
                         <small>
 
                             <?= $precisaAcao === 1
-                                ? "pedido precisa de uma resposta"
-                                : "pedidos precisam de uma resposta" ?>
+                                ? "item precisa de atenção"
+                                : "itens precisam de atenção" ?>
 
                         </small>
-
                     </div>
 
                 </div>
@@ -594,16 +633,58 @@ $erro = isset($_GET["erro"])
 
                             <?php
 
+                            $previsaoAtencao =
+                                !empty($producao["nova_previsao"])
+                                ? $producao["nova_previsao"]
+                                : $producao["previsao_entrega"];
+
+                            $atrasadaAtencao =
+                                !empty($previsaoAtencao) &&
+                                $previsaoAtencao < date("Y-m-d") &&
+                                $producao["quantidade_restante"] > 0;
+
+
                             if (
-                                !empty($producao["confirmacao_prazo"]) ||
-                                $producao["coletado"] === "Sim"
+                                $producao["coletado"] === "Sim" ||
+                                (
+                                    !empty($producao["confirmacao_prazo"]) &&
+                                    !$atrasadaAtencao
+                                )
                             ) {
                                 continue;
                             }
 
                             ?>
 
-                            <div class="portal-producao-card atencao">
+                            <?php
+
+                            $previsaoAtencao =
+                                !empty($producao["nova_previsao"])
+                                ? $producao["nova_previsao"]
+                                : $producao["previsao_entrega"];
+
+                            $atrasadaAtencao = false;
+                            $diasAtraso = 0;
+
+                            if (
+                                !empty($previsaoAtencao) &&
+                                $previsaoAtencao < date("Y-m-d") &&
+                                $producao["quantidade_restante"] > 0
+                            ) {
+
+                                $atrasadaAtencao = true;
+
+                                $dataPrevista = new DateTime($previsaoAtencao);
+                                $dataAtual = new DateTime(date("Y-m-d"));
+
+                                $intervalo = $dataPrevista->diff($dataAtual);
+
+                                $diasAtraso = $intervalo->days;
+                            }
+
+                            ?>
+
+                            <div class="portal-producao-card <?= $atrasadaAtencao ? 'atrasada' : 'atencao' ?>">
 
                                 <div class="portal-producao-topo">
 
@@ -627,13 +708,28 @@ $erro = isset($_GET["erro"])
 
                                     </div>
 
-                                    <span class="portal-badge atencao">
 
-                                        <i class="fa-solid fa-clock"></i>
+                                    <?php if ($atrasadaAtencao) { ?>
 
-                                        Resposta necessária
+                                        <span class="portal-badge atraso">
 
-                                    </span>
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                            Produção atrasada
+
+                                        </span>
+
+                                    <?php } else { ?>
+
+                                        <span class="portal-badge atencao">
+
+                                            <i class="fa-solid fa-clock"></i>
+
+                                            Resposta necessária
+
+                                        </span>
+
+                                    <?php } ?>
 
                                 </div>
 
@@ -658,6 +754,7 @@ $erro = isset($_GET["erro"])
 
                                     </div>
 
+
                                     <div>
 
                                         <span>
@@ -666,12 +763,12 @@ $erro = isset($_GET["erro"])
 
                                         <strong>
 
-                                            <?= date(
-                                                "d/m/Y",
-                                                strtotime(
-                                                    $producao["previsao_entrega"]
+                                            <?= !empty($previsaoAtencao)
+                                                ? date(
+                                                    "d/m/Y",
+                                                    strtotime($previsaoAtencao)
                                                 )
-                                            ) ?>
+                                                : "-" ?>
 
                                         </strong>
 
@@ -680,66 +777,174 @@ $erro = isset($_GET["erro"])
                                 </div>
 
 
-                                <div class="portal-pergunta">
+                                <?php if ($atrasadaAtencao) { ?>
 
-                                    <strong>
-                                        Você consegue entregar até essa data?
-                                    </strong>
+                                    <div class="alerta-atraso-producao">
 
-                                    <p>
-                                        Confirme o prazo ou informe uma nova previsão.
-                                    </p>
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
 
-                                </div>
+                                        <div>
+
+                                            <strong>
+                                                Produção atrasada
+                                            </strong>
+
+                                            <p>
+
+                                                O prazo previsto para
+                                                <?= date(
+                                                    "d/m/Y",
+                                                    strtotime($previsaoAtencao)
+                                                ) ?>
+                                                foi ultrapassado.
+
+                                            </p>
+
+                                            <span>
+
+                                                <?= $diasAtraso ?>
+
+                                                <?= $diasAtraso == 1
+                                                    ? "dia de atraso"
+                                                    : "dias de atraso" ?>
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="portal-pergunta simples">
+
+                                        <strong>
+                                            É necessário atualizar o prazo.
+                                        </strong>
+
+                                        <p>
+                                            Informe uma nova previsão de entrega para manter o pedido atualizado.
+                                        </p>
+
+                                    </div>
+
+
+                                <?php } else { ?>
+
+                                    <div class="portal-pergunta">
+
+                                        <strong>
+                                            Você consegue entregar até essa data?
+                                        </strong>
+
+                                        <p>
+                                            Confirme o prazo ou informe uma nova previsão.
+                                        </p>
+
+                                    </div>
+
+                                <?php } ?>
 
 
                                 <div class="portal-acoes">
 
-                                    <form
-                                        action="salvar_atualizacao.php"
-                                        method="POST">
 
-                                        <input
-                                            type="hidden"
-                                            name="producao_id"
-                                            value="<?= intval(
-                                                        $producao["id"]
-                                                    ) ?>">
+                                    <?php if ($atrasadaAtencao) { ?>
 
-                                        <input
-                                            type="hidden"
-                                            name="confirmacao_prazo"
-                                            value="No prazo">
+                                        <a
+                                            href="atualizar_producao.php?id=<?= intval(
+                                                                                $producao["id"]
+                                                                            ) ?>"
+                                            class="portal-btn alterar">
 
-                                        <input
-                                            type="hidden"
-                                            name="pecas_prontas"
-                                            value="Nao">
+                                            <i class="fa-solid fa-calendar-days"></i>
+
+                                            Atualizar prazo
+
+                                        </a>
+
 
                                         <button
-                                            type="submit"
-                                            class="portal-btn confirmar">
+                                            type="button"
+                                            class="portal-btn pronto btn-liberar-pecas"
+                                            data-id="<?= intval(
+                                                            $producao["id"]
+                                                        ) ?>"
+                                            data-codigo="<?= htmlspecialchars(
+                                                                $producao["codigo"]
+                                                            ) ?>"
+                                            data-produto="<?= htmlspecialchars(
+                                                                $producao["produto_nome"]
+                                                            ) ?>"
+                                            data-total="<?= intval(
+                                                            $producao["quantidade"]
+                                                        ) ?>"
+                                            data-liberadas="<?= intval(
+                                                                $producao["quantidade_liberada"]
+                                                            ) ?>"
+                                            data-restante="<?= intval(
+                                                                $producao["quantidade_restante"]
+                                                            ) ?>">
 
-                                            <i class="fa-solid fa-check"></i>
+                                            <i class="fa-solid fa-box-open"></i>
 
-                                            Sim, confirmo
+                                            Informar peças prontas
 
                                         </button>
 
-                                    </form>
+
+                                    <?php } else { ?>
 
 
-                                    <a
-                                        href="atualizar_producao.php?id=<?= intval(
-                                                                            $producao["id"]
-                                                                        ) ?>"
-                                        class="portal-btn alterar">
+                                        <form
+                                            action="salvar_atualizacao.php"
+                                            method="POST">
 
-                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                            <input
+                                                type="hidden"
+                                                name="producao_id"
+                                                value="<?= intval(
+                                                            $producao["id"]
+                                                        ) ?>">
 
-                                        Não, preciso alterar
+                                            <input
+                                                type="hidden"
+                                                name="confirmacao_prazo"
+                                                value="No prazo">
 
-                                    </a>
+                                            <input
+                                                type="hidden"
+                                                name="pecas_prontas"
+                                                value="Nao">
+
+
+                                            <button
+                                                type="submit"
+                                                class="portal-btn confirmar">
+
+                                                <i class="fa-solid fa-check"></i>
+
+                                                Sim, confirmo
+
+                                            </button>
+
+                                        </form>
+
+
+                                        <a
+                                            href="atualizar_producao.php?id=<?= intval(
+                                                                                $producao["id"]
+                                                                            ) ?>"
+                                            class="portal-btn alterar">
+
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                            Não, preciso alterar
+
+                                        </a>
+
+
+                                    <?php } ?>
+
 
                                 </div>
 

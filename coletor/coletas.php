@@ -83,10 +83,8 @@ $resultado = mysqli_query(
 );
 
 if (!$resultado) {
-    die(
-        "Erro ao carregar as produções: "
-        . mysqli_error($conexao)
-    );
+    die("Erro ao carregar as produções: "
+        . mysqli_error($conexao));
 }
 
 
@@ -184,17 +182,14 @@ $resultadoColetas = mysqli_query(
 );
 
 if (!$resultadoColetas) {
-    die(
-        "Erro ao carregar as coletas: "
-        . mysqli_error($conexao)
-    );
+    die("Erro ao carregar as coletas: "
+        . mysqli_error($conexao));
 }
 
 
-$coletas = [];
-
 $prontas = 0;
 $coletadas = 0;
+$atrasadasColeta = 0;
 
 while (
     $coleta = mysqli_fetch_assoc(
@@ -217,13 +212,90 @@ while (
     $coleta["quantidade_coletada"] =
         intval($coleta["quantidade_coletada"]);
 
+
+    /*
+     * Verifica se a coleta está atrasada.
+     *
+     * A coleta deve ser realizada no mesmo dia
+     * em que as peças foram liberadas.
+     */
+    $coletaAtrasada = false;
+    $diasAtrasoColeta = 0;
+
+    if (
+        $coleta["coleta_status"] === "Aguardando" &&
+        !empty($coleta["data_liberacao"])
+    ) {
+
+        $dataLiberacao = date(
+            "Y-m-d",
+            strtotime($coleta["data_liberacao"])
+        );
+
+        $dataHoje = date("Y-m-d");
+
+        if ($dataLiberacao < $dataHoje) {
+
+            $coletaAtrasada = true;
+
+            $dataLiberacaoObj = new DateTime(
+                $dataLiberacao
+            );
+
+            $dataHojeObj = new DateTime(
+                $dataHoje
+            );
+
+            $intervalo = $dataLiberacaoObj->diff(
+                $dataHojeObj
+            );
+
+            $diasAtrasoColeta =
+                $intervalo->days;
+        }
+    }
+
+
+    /*
+     * Guarda as informações da situação
+     * junto com os dados da coleta.
+     */
+    $coleta["coleta_atrasada"] =
+        $coletaAtrasada;
+
+    $coleta["dias_atraso"] =
+        $diasAtrasoColeta;
+
+
+    /*
+     * Conta quantas coletas estão atrasadas.
+     */
+    if ($coleta["coleta_atrasada"]) {
+
+        $atrasadasColeta++;
+    }
+
+
+    /*
+     * Guarda a coleta no array principal.
+     */
     $coletas[] = $coleta;
 
+
+    /*
+     * Conta coletas que ainda aguardam retirada.
+     */
     if ($coleta["coleta_status"] === "Aguardando") {
+
         $prontas++;
     }
 
+
+    /*
+     * Conta coletas já realizadas.
+     */
     if ($coleta["coleta_status"] === "Coletado") {
+
         $coletadas++;
     }
 }
@@ -488,77 +560,30 @@ $erro = isset($_GET["erro"])
 
 <body>
 
-<div class="app">
+    <div class="app">
 
 
-    <!-- =====================================================
+        <!-- =====================================================
          CABEÇALHO MOBILE
          ===================================================== -->
 
-    <header class="portal-mobile-header">
+        <header class="portal-mobile-header">
 
-        <div class="portal-mobile-brand">
+            <div class="portal-mobile-brand">
 
-            <strong>
-                CRONEX
-            </strong>
-
-            <span>
-                Portal do Coletor
-            </span>
-
-        </div>
-
-        <a
-            href="../logout.php"
-            class="portal-mobile-logout">
-
-            <i class="fa-solid fa-right-from-bracket"></i>
-
-            <span>
-                Sair
-            </span>
-
-        </a>
-
-    </header>
-
-
-    <!-- =====================================================
-         MENU
-         ===================================================== -->
-
-    <aside class="sidebar">
-
-        <div class="logo">
-
-            <h2>
-                CRONEX
-            </h2>
-
-            <span>
-                Portal do Coletor
-            </span>
-
-        </div>
-
-        <nav class="menu">
-
-            <a
-                href="coletas.php"
-                class="active">
-
-                <i class="fa-solid fa-truck"></i>
+                <strong>
+                    CRONEX
+                </strong>
 
                 <span>
-                    Coletas
+                    Portal do Coletor
                 </span>
 
-            </a>
+            </div>
 
-            <hr>
-
-            <a href="../logout.php">
+            <a
+                href="../logout.php"
+                class="portal-mobile-logout">
 
                 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -568,659 +593,269 @@ $erro = isset($_GET["erro"])
 
             </a>
 
-        </nav>
-
-    </aside>
+        </header>
 
 
-    <!-- =====================================================
-         CONTEÚDO
+        <!-- =====================================================
+         MENU
          ===================================================== -->
 
-    <main class="main-content">
+        <aside class="sidebar">
 
-        <header class="topbar">
+            <div class="logo">
 
-            <div>
-
-                <h1>
-                    Coletas
-                </h1>
-
-                <p>
-                    Veja rapidamente onde existem peças para coletar.
-                </p>
-
-            </div>
-
-            <div class="user-box">
+                <h2>
+                    CRONEX
+                </h2>
 
                 <span>
-
-                    <?= htmlspecialchars(
-                        $_SESSION["nome"] ?? "Coletor"
-                    ) ?>
-
+                    Portal do Coletor
                 </span>
 
             </div>
 
-        </header>
+            <nav class="menu">
 
+                <a
+                    href="coletas.php"
+                    class="active">
 
-        <!-- =================================================
-             MENSAGENS
-             ================================================= -->
-
-        <?php if ($sucesso === "coletado") { ?>
-
-            <div class="alert-success">
-
-                <i class="fa-solid fa-circle-check"></i>
-
-                Coleta registrada com sucesso.
-
-            </div>
-
-        <?php } ?>
-
-
-        <?php if ($erro === "nao_pronto") { ?>
-
-            <div class="alert-error">
-
-                <i class="fa-solid fa-circle-exclamation"></i>
-
-                Esta liberação ainda não está disponível para coleta.
-
-            </div>
-
-        <?php } ?>
-
-
-        <?php if ($erro === "ja_coletado") { ?>
-
-            <div class="alert-error">
-
-                <i class="fa-solid fa-circle-exclamation"></i>
-
-                Esta coleta já foi registrada.
-
-            </div>
-
-        <?php } ?>
-
-
-        <?php if (
-            $erro !== "" &&
-            $erro !== "nao_pronto" &&
-            $erro !== "ja_coletado"
-        ) { ?>
-
-            <div class="alert-error">
-
-                <i class="fa-solid fa-circle-exclamation"></i>
-
-                Não foi possível realizar a operação.
-
-            </div>
-
-        <?php } ?>
-
-
-        <!-- =================================================
-             RESUMO
-             ================================================= -->
-
-        <section class="portal-resumo">
-
-            <div class="portal-resumo-card destaque">
-
-                <div class="portal-resumo-icon">
-
-                    <i class="fa-solid fa-box-open"></i>
-
-                </div>
-
-                <div>
+                    <i class="fa-solid fa-truck"></i>
 
                     <span>
-                        Prontas para coleta
+                        Coletas
                     </span>
 
-                    <strong>
-                        <?= $prontas ?>
-                    </strong>
+                </a>
 
-                    <small>
+                <hr>
 
-                        <?= $prontas === 1
-                            ? "coleta disponível agora"
-                            : "coletas disponíveis agora" ?>
+                <a href="../logout.php">
 
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="portal-resumo-card">
-
-                <div class="portal-resumo-icon">
-
-                    <i class="fa-solid fa-calendar-days"></i>
-
-                </div>
-
-                <div>
+                    <i class="fa-solid fa-right-from-bracket"></i>
 
                     <span>
-                        Próximas
+                        Sair
                     </span>
 
-                    <strong>
-                        <?= $previstas ?>
-                    </strong>
+                </a>
 
-                    <small>
-                        Produções ainda em andamento
-                    </small>
+            </nav>
 
-                </div>
-
-            </div>
+        </aside>
 
 
-            <div class="portal-resumo-card">
+        <!-- =====================================================
+         CONTEÚDO
+         ===================================================== -->
 
-                <div class="portal-resumo-icon">
+        <main class="main-content">
 
-                    <i class="fa-solid fa-circle-check"></i>
-
-                </div>
+            <header class="topbar">
 
                 <div>
 
-                    <span>
-                        Coletadas
-                    </span>
-
-                    <strong>
-                        <?= $coletadas ?>
-                    </strong>
-
-                    <small>
-                        Coletas já registradas
-                    </small>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             PRONTAS PARA COLETA
-             ================================================= -->
-
-        <section class="portal-section">
-
-            <div class="portal-section-title">
-
-                <div>
-
-                    <h2>
-
-                        <i class="fa-solid fa-box-open"></i>
-
-                        Prontas para coleta
-
-                    </h2>
+                    <h1>
+                        Coletas
+                    </h1>
 
                     <p>
-                        Priorize estas peças.
+                        Veja rapidamente onde existem peças para coletar.
                     </p>
 
                 </div>
 
-            </div>
+                <div class="user-box">
 
+                    <span>
 
-            <div class="portal-producao-grid">
+                        <?= htmlspecialchars(
+                            $_SESSION["nome"] ?? "Coletor"
+                        ) ?>
 
-                <?php
+                    </span>
 
-                $temProntas = false;
+                </div>
 
-                foreach ($coletas as $coleta) {
+            </header>
 
-                    if (
-                        $coleta["coleta_status"]
-                        !== "Aguardando"
-                    ) {
-                        continue;
-                    }
 
-                    $temProntas = true;
+            <!-- =================================================
+             MENSAGENS
+             ================================================= -->
 
-                    $endereco =
-                        montarEnderecoColeta(
-                            $coleta
-                        );
+            <?php if ($sucesso === "coletado") { ?>
 
-                    $linkMaps =
-                        gerarLinkMaps(
-                            $coleta
-                        );
+                <div class="alert-success">
 
-                    $quantidadeTotal =
-                        intval(
-                            $coleta["quantidade_total"]
-                        );
+                    <i class="fa-solid fa-circle-check"></i>
 
-                    $quantidadeColeta =
-                        intval(
-                            $coleta["quantidade_coleta"]
-                        );
+                    Coleta registrada com sucesso.
 
-                    $quantidadeColetada =
-                        intval(
-                            $coleta["quantidade_coletada"]
-                        );
+                </div>
 
-                    $restanteDepoisColeta =
-                        max(
-                            0,
-                            $quantidadeTotal
-                            -
-                            $quantidadeColetada
-                            -
-                            $quantidadeColeta
-                        );
+            <?php } ?>
 
-                ?>
 
-                    <div
-                        class="portal-producao-card destaque-coleta">
+            <?php if ($erro === "nao_pronto") { ?>
 
+                <div class="alert-error">
 
-                        <div class="portal-producao-topo">
+                    <i class="fa-solid fa-circle-exclamation"></i>
 
-                            <div>
+                    Esta liberação ainda não está disponível para coleta.
 
-                                <span class="portal-codigo">
+                </div>
 
-                                    <?= htmlspecialchars(
-                                        $coleta["codigo"]
-                                    ) ?>
+            <?php } ?>
 
-                                </span>
 
-                                <h3>
+            <?php if ($erro === "ja_coletado") { ?>
 
-                                    <?= htmlspecialchars(
-                                        $coleta["razao_social"]
-                                    ) ?>
+                <div class="alert-error">
 
-                                </h3>
+                    <i class="fa-solid fa-circle-exclamation"></i>
 
-                            </div>
+                    Esta coleta já foi registrada.
 
+                </div>
 
-                            <span class="portal-badge sucesso">
+            <?php } ?>
 
-                                <i class="fa-solid fa-box-open"></i>
 
-                                <?= number_format(
-                                    $quantidadeColeta,
-                                    0,
-                                    ",",
-                                    "."
-                                ) ?>
+            <?php if (
+                $erro !== "" &&
+                $erro !== "nao_pronto" &&
+                $erro !== "ja_coletado"
+            ) { ?>
 
-                                peças prontas
+                <div class="alert-error">
 
-                            </span>
+                    <i class="fa-solid fa-circle-exclamation"></i>
 
-                        </div>
+                    Não foi possível realizar a operação.
 
+                </div>
 
-                        <!-- INFORMAÇÕES -->
+            <?php } ?>
 
-                        <div class="portal-info-grid">
 
-                            <div>
+            <!-- =================================================
+             RESUMO
+             ================================================= -->
 
-                                <span>
-                                    Produto
-                                </span>
+            <section class="portal-resumo">
 
-                                <strong>
+                <div class="portal-resumo-card destaque">
 
-                                    <?= htmlspecialchars(
-                                        $coleta["produto_nome"]
-                                    ) ?>
+                    <div class="portal-resumo-icon">
 
-                                </strong>
-
-                            </div>
-
-
-                            <div>
-
-                                <span>
-                                    Disponíveis nesta coleta
-                                </span>
-
-                                <strong>
-
-                                    <?= number_format(
-                                        $quantidadeColeta,
-                                        0,
-                                        ",",
-                                        "."
-                                    ) ?>
-
-                                    peças
-
-                                </strong>
-
-                            </div>
-
-
-                            <div>
-
-                                <span>
-                                    Produção total
-                                </span>
-
-                                <strong>
-
-                                    <?= number_format(
-                                        $quantidadeTotal,
-                                        0,
-                                        ",",
-                                        "."
-                                    ) ?>
-
-                                    peças
-
-                                </strong>
-
-                            </div>
-
-
-                            <div>
-
-                                <span>
-                                    Já coletadas anteriormente
-                                </span>
-
-                                <strong>
-
-                                    <?= number_format(
-                                        $quantidadeColetada,
-                                        0,
-                                        ",",
-                                        "."
-                                    ) ?>
-
-                                    peças
-
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- ENDEREÇO -->
-
-                        <div class="coletor-endereco">
-
-                            <i class="fa-solid fa-location-dot"></i>
-
-                            <div>
-
-                                <span>
-                                    Local da coleta
-                                </span>
-
-                                <strong>
-
-                                    <?= htmlspecialchars(
-                                        $endereco
-                                    ) ?>
-
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- GOOGLE MAPS -->
-
-                        <?php if ($linkMaps !== "") { ?>
-
-                            <a
-                                href="<?= htmlspecialchars(
-                                    $linkMaps,
-                                    ENT_QUOTES,
-                                    "UTF-8"
-                                ) ?>"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="coletor-btn-rota">
-
-                                <i class="fa-solid fa-route"></i>
-
-                                <span>
-                                    Abrir rota no Google Maps
-                                </span>
-
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-
-                            </a>
-
-                        <?php } ?>
-
-
-                        <!-- RESPONSÁVEL -->
-
-                        <?php if (
-                            !empty(
-                                $coleta["responsavel"]
-                            )
-                        ) { ?>
-
-                            <div class="coletor-contato">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                <span>
-
-                                    Responsável:
-
-                                    <?= htmlspecialchars(
-                                        $coleta["responsavel"]
-                                    ) ?>
-
-                                </span>
-
-                            </div>
-
-                        <?php } ?>
-
-
-                        <!-- TELEFONE -->
-
-                        <?php if (
-                            !empty(
-                                $coleta["telefone"]
-                            )
-                        ) { ?>
-
-                            <div class="coletor-contato">
-
-                                <i class="fa-solid fa-phone"></i>
-
-                                <span>
-
-                                    Telefone:
-
-                                    <?= htmlspecialchars(
-                                        $coleta["telefone"]
-                                    ) ?>
-
-                                </span>
-
-                            </div>
-
-                        <?php } ?>
-
-
-                        <!-- DATA DA LIBERAÇÃO -->
-
-                        <div class="coletor-previsao">
-
-                            <i class="fa-solid fa-clock"></i>
-
-                            <div>
-
-                                <span>
-                                    Peças liberadas em
-                                </span>
-
-                                <strong>
-
-                                    <?= formatarDataHoraColeta(
-                                        $coleta["data_liberacao"]
-                                    ) ?>
-
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- SITUAÇÃO APÓS ESTA COLETA -->
-
-                        <div class="coletor-previsao">
-
-                            <i class="fa-solid fa-boxes-stacked"></i>
-
-                            <div>
-
-                                <span>
-                                    Restarão na produção após esta coleta
-                                </span>
-
-                                <strong>
-
-                                    <?= number_format(
-                                        $restanteDepoisColeta,
-                                        0,
-                                        ",",
-                                        "."
-                                    ) ?>
-
-                                    peças
-
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- AÇÕES -->
-
-                        <div class="portal-acoes">
-
-                            <button
-                                type="button"
-                                class="portal-btn pronto btn-abrir-coleta"
-
-                                data-id="<?= intval(
-                                    $coleta["coleta_id"]
-                                ) ?>"
-
-                                data-codigo="<?= htmlspecialchars(
-                                    $coleta["codigo"],
-                                    ENT_QUOTES,
-                                    "UTF-8"
-                                ) ?>"
-
-                                data-empresa="<?= htmlspecialchars(
-                                    $coleta["razao_social"],
-                                    ENT_QUOTES,
-                                    "UTF-8"
-                                ) ?>"
-
-                                data-produto="<?= htmlspecialchars(
-                                    $coleta["produto_nome"],
-                                    ENT_QUOTES,
-                                    "UTF-8"
-                                ) ?>"
-
-                                data-quantidade="<?= intval(
-                                    $quantidadeColeta
-                                ) ?>">
-
-                                <i class="fa-solid fa-truck"></i>
-
-                                Registrar coleta de
-
-                                <?= number_format(
-                                    $quantidadeColeta,
-                                    0,
-                                    ",",
-                                    "."
-                                ) ?>
-
-                                peças
-
-                            </button>
-
-                        </div>
+                        <i class="fa-solid fa-box-open"></i>
 
                     </div>
 
-                <?php } ?>
+                    <div>
+
+                        <?php if ($atrasadasColeta > 0) { ?>
+
+                            <span>
+                                Coletas atrasadas
+                            </span>
+
+                            <strong>
+                                <?= $atrasadasColeta ?>
+                            </strong>
+
+                            <small>
+                                <?= $atrasadasColeta === 1
+                                    ? "coleta precisa ser realizada"
+                                    : "coletas precisam ser realizadas" ?>
+                            </small>
+
+                        <?php } else { ?>
+
+                            <span>
+                                Prontas para coleta
+                            </span>
+
+                            <strong>
+                                <?= $prontas ?>
+                            </strong>
+
+                            <small>
+
+                                <?= $prontas === 1
+                                    ? "coleta disponível agora"
+                                    : "coletas disponíveis agora" ?>
+
+                            </small>
+
+                        <?php } ?>
+
+                    </div>
+
+                </div>
 
 
-                <?php if (!$temProntas) { ?>
+                <div class="portal-resumo-card">
 
-                    <div class="portal-vazio">
+                    <div class="portal-resumo-icon">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Próximas
+                        </span>
+
+                        <strong>
+                            <?= $previstas ?>
+                        </strong>
+
+                        <small>
+                            Produções ainda em andamento
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="portal-resumo-card">
+
+                    <div class="portal-resumo-icon">
 
                         <i class="fa-solid fa-circle-check"></i>
 
-                        <strong>
-                            Nenhuma coleta disponível agora.
-                        </strong>
+                    </div>
+
+                    <div>
 
                         <span>
-                            Novas coletas aparecerão aqui quando a terceirizada liberar peças.
+                            Coletadas
                         </span>
+
+                        <strong>
+                            <?= $coletadas ?>
+                        </strong>
+
+                        <small>
+                            Coletas já registradas
+                        </small>
 
                     </div>
 
-                <?php } ?>
+                </div>
 
-            </div>
-
-        </section>
+            </section>
 
 
-        <!-- =================================================
-             PRÓXIMAS COLETAS
+            <!-- =================================================
+             PRONTAS PARA COLETA
              ================================================= -->
-
-        <?php if ($previstas > 0) { ?>
 
             <section class="portal-section">
 
@@ -1230,14 +865,34 @@ $erro = isset($_GET["erro"])
 
                         <h2>
 
-                            <i class="fa-solid fa-calendar-days"></i>
+                            <?php if ($atrasadasColeta > 0) { ?>
 
-                            Próximas coletas
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                Coletas com atenção
+
+                            <?php } else { ?>
+
+                                <i class="fa-solid fa-box-open"></i>
+
+                                Prontas para coleta
+
+                            <?php } ?>
 
                         </h2>
 
                         <p>
-                            Produções que ainda possuem peças em fabricação.
+
+                            <?php if ($atrasadasColeta > 0) { ?>
+
+                                Existem coletas atrasadas. Priorize estas retiradas.
+
+                            <?php } else { ?>
+
+                                Priorize estas peças.
+
+                            <?php } ?>
+
                         </p>
 
                     </div>
@@ -1247,65 +902,99 @@ $erro = isset($_GET["erro"])
 
                 <div class="portal-producao-grid">
 
-                    <?php foreach (
-                        $producoes as $producao
-                    ) { ?>
+                    <?php
 
-                        <?php
+                    $temProntas = false;
 
-                        $quantidadeTotal =
-                            intval(
-                                $producao["quantidade"]
-                            );
-
-                        $quantidadeLiberada =
-                            intval(
-                                $producao["quantidade_liberada"]
-                            );
-
-                        $quantidadeColetada =
-                            intval(
-                                $producao["quantidade_coletada"]
-                            );
-
-                        $restanteLiberar =
-                            max(
-                                0,
-                                $quantidadeTotal
-                                -
-                                $quantidadeLiberada
-                            );
+                    foreach ($coletas as $coleta) {
 
                         if (
-                            $restanteLiberar <= 0 ||
-                            $producao["coletado"] === "Sim"
+                            $coleta["coleta_status"]
+                            !== "Aguardando"
                         ) {
+
                             continue;
                         }
 
-
-                        $previsaoAtual =
-                            !empty(
-                                $producao["nova_previsao"]
-                            )
-                                ? $producao["nova_previsao"]
-                                : $producao["previsao_entrega"];
-
+                        $temProntas = true;
 
                         $endereco =
                             montarEnderecoColeta(
-                                $producao
+                                $coleta
                             );
 
                         $linkMaps =
                             gerarLinkMaps(
-                                $producao
+                                $coleta
                             );
 
-                        ?>
+                        $quantidadeTotal =
+                            intval(
+                                $coleta["quantidade_total"]
+                            );
+
+                        $quantidadeColeta =
+                            intval(
+                                $coleta["quantidade_coleta"]
+                            );
+
+                        $quantidadeColetada =
+                            intval(
+                                $coleta["quantidade_coletada"]
+                            );
+
+                        $restanteDepoisColeta =
+                            max(
+                                0,
+                                $quantidadeTotal
+                                    -
+                                    $quantidadeColetada
+                                    -
+                                    $quantidadeColeta
+                            );
+
+                    ?>
+
+                        <div
+                            class="portal-producao-card destaque-coleta">
 
 
-                        <div class="portal-producao-card">
+                            <?php if ($coleta["coleta_atrasada"]) { ?>
+
+                                <div class="alerta-atraso-coleta">
+
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                    <div>
+
+                                        <strong>
+                                            Coleta atrasada
+                                        </strong>
+
+                                        <span>
+                                            Esta coleta foi liberada em
+                                            <?= formatarDataColeta(
+                                                $coleta["data_liberacao"]
+                                            ) ?>
+                                            e ainda não foi realizada.
+                                        </span>
+
+                                        <strong>
+
+                                            <?= $coleta["dias_atraso"] ?>
+
+                                            <?= $coleta["dias_atraso"] == 1
+                                                ? "dia de atraso"
+                                                : "dias de atraso" ?>
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            <?php } ?>
+
 
                             <div class="portal-producao-topo">
 
@@ -1314,7 +1003,7 @@ $erro = isset($_GET["erro"])
                                     <span class="portal-codigo">
 
                                         <?= htmlspecialchars(
-                                            $producao["codigo"]
+                                            $coleta["codigo"]
                                         ) ?>
 
                                     </span>
@@ -1322,7 +1011,7 @@ $erro = isset($_GET["erro"])
                                     <h3>
 
                                         <?= htmlspecialchars(
-                                            $producao["razao_social"]
+                                            $coleta["razao_social"]
                                         ) ?>
 
                                     </h3>
@@ -1330,16 +1019,39 @@ $erro = isset($_GET["erro"])
                                 </div>
 
 
-                                <span class="portal-badge info">
+                                <?php if ($coleta["coleta_atrasada"]) { ?>
 
-                                    <i class="fa-solid fa-shirt"></i>
+                                    <span class="portal-badge atraso">
 
-                                    Em produção
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
 
-                                </span>
+                                        Prioridade
+
+                                    </span>
+
+                                <?php } else { ?>
+
+                                    <span class="portal-badge sucesso">
+
+                                        <i class="fa-solid fa-box-open"></i>
+
+                                        <?= number_format(
+                                            $quantidadeColeta,
+                                            0,
+                                            ",",
+                                            "."
+                                        ) ?>
+
+                                        peças prontas
+
+                                    </span>
+
+                                <?php } ?>
 
                             </div>
 
+
+                            <!-- INFORMAÇÕES -->
 
                             <div class="portal-info-grid">
 
@@ -1352,8 +1064,30 @@ $erro = isset($_GET["erro"])
                                     <strong>
 
                                         <?= htmlspecialchars(
-                                            $producao["produto_nome"]
+                                            $coleta["produto_nome"]
                                         ) ?>
+
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        Disponíveis nesta coleta
+                                    </span>
+
+                                    <strong>
+
+                                        <?= number_format(
+                                            $quantidadeColeta,
+                                            0,
+                                            ",",
+                                            "."
+                                        ) ?>
+
+                                        peças
 
                                     </strong>
 
@@ -1385,35 +1119,13 @@ $erro = isset($_GET["erro"])
                                 <div>
 
                                     <span>
-                                        Já liberadas
+                                        Já coletadas anteriormente
                                     </span>
 
                                     <strong>
 
                                         <?= number_format(
-                                            $quantidadeLiberada,
-                                            0,
-                                            ",",
-                                            "."
-                                        ) ?>
-
-                                        peças
-
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                    <span>
-                                        Ainda em produção
-                                    </span>
-
-                                    <strong>
-
-                                        <?= number_format(
-                                            $restanteLiberar,
+                                            $quantidadeColetada,
                                             0,
                                             ",",
                                             "."
@@ -1428,28 +1140,7 @@ $erro = isset($_GET["erro"])
                             </div>
 
 
-                            <div class="coletor-previsao">
-
-                                <i class="fa-solid fa-calendar-check"></i>
-
-                                <div>
-
-                                    <span>
-                                        Previsão atual
-                                    </span>
-
-                                    <strong>
-
-                                        <?= formatarDataColeta(
-                                            $previsaoAtual
-                                        ) ?>
-
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
+                            <!-- ENDEREÇO -->
 
                             <div class="coletor-endereco">
 
@@ -1458,7 +1149,7 @@ $erro = isset($_GET["erro"])
                                 <div>
 
                                     <span>
-                                        Local previsto para coleta
+                                        Local da coleta
                                     </span>
 
                                     <strong>
@@ -1474,16 +1165,16 @@ $erro = isset($_GET["erro"])
                             </div>
 
 
-                            <?php if (
-                                $linkMaps !== ""
-                            ) { ?>
+                            <!-- GOOGLE MAPS -->
+
+                            <?php if ($linkMaps !== "") { ?>
 
                                 <a
                                     href="<?= htmlspecialchars(
-                                        $linkMaps,
-                                        ENT_QUOTES,
-                                        "UTF-8"
-                                    ) ?>"
+                                                $linkMaps,
+                                                ENT_QUOTES,
+                                                "UTF-8"
+                                            ) ?>"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="coletor-btn-rota">
@@ -1491,7 +1182,7 @@ $erro = isset($_GET["erro"])
                                     <i class="fa-solid fa-route"></i>
 
                                     <span>
-                                        Ver local no Google Maps
+                                        Abrir rota no Google Maps
                                     </span>
 
                                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1500,131 +1191,98 @@ $erro = isset($_GET["erro"])
 
                             <?php } ?>
 
-                        </div>
 
-                    <?php } ?>
+                            <!-- RESPONSÁVEL -->
 
-                </div>
+                            <?php if (
+                                !empty($coleta["responsavel"])
+                            ) { ?>
 
-            </section>
+                                <div class="coletor-contato">
 
-        <?php } ?>
+                                    <i class="fa-solid fa-user"></i>
 
+                                    <span>
 
-        <!-- =================================================
-             COLETAS REALIZADAS
-             ================================================= -->
-
-        <?php if ($coletadas > 0) { ?>
-
-            <section class="portal-section">
-
-                <div class="portal-section-title">
-
-                    <div>
-
-                        <h2>
-
-                            <i class="fa-solid fa-circle-check"></i>
-
-                            Coletas realizadas
-
-                        </h2>
-
-                        <p>
-                            Retiradas já registradas pelo coletor.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="portal-producao-grid">
-
-                    <?php foreach (
-                        $coletas as $coleta
-                    ) { ?>
-
-                        <?php
-
-                        if (
-                            $coleta["coleta_status"]
-                            !== "Coletado"
-                        ) {
-                            continue;
-                        }
-
-                        ?>
-
-
-                        <div class="portal-producao-card finalizado">
-
-                            <div class="portal-producao-topo">
-
-                                <div>
-
-                                    <span class="portal-codigo">
+                                        Responsável:
 
                                         <?= htmlspecialchars(
-                                            $coleta["codigo"]
+                                            $coleta["responsavel"]
                                         ) ?>
 
                                     </span>
 
-                                    <h3>
+                                </div>
+
+                            <?php } ?>
+
+
+                            <!-- TELEFONE -->
+
+                            <?php if (
+                                !empty($coleta["telefone"])
+                            ) { ?>
+
+                                <div class="coletor-contato">
+
+                                    <i class="fa-solid fa-phone"></i>
+
+                                    <span>
+
+                                        Telefone:
 
                                         <?= htmlspecialchars(
-                                            $coleta["razao_social"]
+                                            $coleta["telefone"]
                                         ) ?>
 
-                                    </h3>
+                                    </span>
 
                                 </div>
 
-
-                                <span class="portal-badge sucesso">
-
-                                    <i class="fa-solid fa-circle-check"></i>
-
-                                    Coletado
-
-                                </span>
-
-                            </div>
+                            <?php } ?>
 
 
-                            <div class="portal-info-grid">
+                            <!-- DATA DA LIBERAÇÃO -->
+
+                            <div class="coletor-previsao">
+
+                                <i class="fa-solid fa-clock"></i>
 
                                 <div>
 
                                     <span>
-                                        Produto
+                                        Peças liberadas em
                                     </span>
 
                                     <strong>
 
-                                        <?= htmlspecialchars(
-                                            $coleta["produto_nome"]
+                                        <?= formatarDataHoraColeta(
+                                            $coleta["data_liberacao"]
                                         ) ?>
 
                                     </strong>
 
                                 </div>
 
+                            </div>
+
+
+                            <!-- SITUAÇÃO APÓS ESTA COLETA -->
+
+                            <div class="coletor-previsao">
+
+                                <i class="fa-solid fa-boxes-stacked"></i>
 
                                 <div>
 
                                     <span>
-                                        Quantidade coletada
+                                        Restarão na produção após esta coleta
                                     </span>
 
                                     <strong>
 
                                         <?= number_format(
-                                            intval(
-                                                $coleta["quantidade_coleta"]
-                                            ),
+                                            $restanteDepoisColeta,
                                             0,
                                             ",",
                                             "."
@@ -1639,57 +1297,75 @@ $erro = isset($_GET["erro"])
                             </div>
 
 
-                            <div class="portal-status-final">
+                            <!-- AÇÕES -->
 
-                                <i class="fa-solid fa-truck-fast"></i>
+                            <div class="portal-acoes">
 
-                                <div>
+                                <button
+                                    type="button"
+                                    class="portal-btn pronto btn-abrir-coleta"
 
-                                    <strong>
-                                        Coleta realizada
-                                    </strong>
+                                    data-id="<?= intval(
+                                                    $coleta["coleta_id"]
+                                                ) ?>"
 
-                                    <span>
+                                    data-codigo="<?= htmlspecialchars(
+                                                        $coleta["codigo"],
+                                                        ENT_QUOTES,
+                                                        "UTF-8"
+                                                    ) ?>"
 
-                                        <?= !empty(
-                                            $coleta["data_coleta"]
-                                        )
-                                            ? "Registrada em " .
-                                                formatarDataHoraColeta(
-                                                    $coleta["data_coleta"]
-                                                )
-                                            : "Coleta registrada" ?>
+                                    data-empresa="<?= htmlspecialchars(
+                                                        $coleta["razao_social"],
+                                                        ENT_QUOTES,
+                                                        "UTF-8"
+                                                    ) ?>"
 
-                                    </span>
+                                    data-produto="<?= htmlspecialchars(
+                                                        $coleta["produto_nome"],
+                                                        ENT_QUOTES,
+                                                        "UTF-8"
+                                                    ) ?>"
 
-                                </div>
+                                    data-quantidade="<?= intval(
+                                                            $quantidadeColeta
+                                                        ) ?>">
+
+                                    <i class="fa-solid fa-truck"></i>
+
+                                    Registrar coleta de
+
+                                    <?= number_format(
+                                        $quantidadeColeta,
+                                        0,
+                                        ",",
+                                        "."
+                                    ) ?>
+
+                                    peças
+
+                                </button>
 
                             </div>
 
+                        </div>
 
-                            <div class="coletor-endereco">
+                    <?php } ?>
 
-                                <i class="fa-solid fa-location-dot"></i>
 
-                                <div>
+                    <?php if (!$temProntas) { ?>
 
-                                    <span>
-                                        Local da coleta
-                                    </span>
+                        <div class="portal-vazio">
 
-                                    <strong>
+                            <i class="fa-solid fa-circle-check"></i>
 
-                                        <?= htmlspecialchars(
-                                            montarEnderecoColeta(
-                                                $coleta
-                                            )
-                                        ) ?>
+                            <strong>
+                                Nenhuma coleta disponível agora.
+                            </strong>
 
-                                    </strong>
-
-                                </div>
-
-                            </div>
+                            <span>
+                                Novas coletas aparecerão aqui quando a terceirizada liberar peças.
+                            </span>
 
                         </div>
 
@@ -1699,160 +1375,640 @@ $erro = isset($_GET["erro"])
 
             </section>
 
-        <?php } ?>
 
-    </main>
+            <!-- =================================================
+             PRÓXIMAS COLETAS
+             ================================================= -->
 
-</div>
+            <?php if ($previstas > 0) { ?>
+
+                <section class="portal-section">
+
+                    <div class="portal-section-title">
+
+                        <div>
+
+                            <h2>
+
+                                <i class="fa-solid fa-calendar-days"></i>
+
+                                Próximas coletas
+
+                            </h2>
+
+                            <p>
+                                Produções que ainda possuem peças em fabricação.
+                            </p>
+
+                        </div>
+
+                    </div>
 
 
-<!-- =========================================================
+                    <div class="portal-producao-grid">
+
+                        <?php foreach (
+                            $producoes as $producao
+                        ) { ?>
+
+                            <?php
+
+                            $quantidadeTotal =
+                                intval(
+                                    $producao["quantidade"]
+                                );
+
+                            $quantidadeLiberada =
+                                intval(
+                                    $producao["quantidade_liberada"]
+                                );
+
+                            $quantidadeColetada =
+                                intval(
+                                    $producao["quantidade_coletada"]
+                                );
+
+                            $restanteLiberar =
+                                max(
+                                    0,
+                                    $quantidadeTotal
+                                        -
+                                        $quantidadeLiberada
+                                );
+
+                            if (
+                                $restanteLiberar <= 0 ||
+                                $producao["coletado"] === "Sim"
+                            ) {
+                                continue;
+                            }
+
+
+                            $previsaoAtual =
+                                !empty($producao["nova_previsao"])
+                                ? $producao["nova_previsao"]
+                                : $producao["previsao_entrega"];
+
+
+                            $endereco =
+                                montarEnderecoColeta(
+                                    $producao
+                                );
+
+                            $linkMaps =
+                                gerarLinkMaps(
+                                    $producao
+                                );
+
+                            ?>
+
+
+                            <div class="portal-producao-card">
+
+                                <div class="portal-producao-topo">
+
+                                    <div>
+
+                                        <span class="portal-codigo">
+
+                                            <?= htmlspecialchars(
+                                                $producao["codigo"]
+                                            ) ?>
+
+                                        </span>
+
+                                        <h3>
+
+                                            <?= htmlspecialchars(
+                                                $producao["razao_social"]
+                                            ) ?>
+
+                                        </h3>
+
+                                    </div>
+
+
+                                    <span class="portal-badge info">
+
+                                        <i class="fa-solid fa-shirt"></i>
+
+                                        Em produção
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="portal-info-grid">
+
+                                    <div>
+
+                                        <span>
+                                            Produto
+                                        </span>
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                $producao["produto_nome"]
+                                            ) ?>
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Produção total
+                                        </span>
+
+                                        <strong>
+
+                                            <?= number_format(
+                                                $quantidadeTotal,
+                                                0,
+                                                ",",
+                                                "."
+                                            ) ?>
+
+                                            peças
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Já liberadas
+                                        </span>
+
+                                        <strong>
+
+                                            <?= number_format(
+                                                $quantidadeLiberada,
+                                                0,
+                                                ",",
+                                                "."
+                                            ) ?>
+
+                                            peças
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Ainda em produção
+                                        </span>
+
+                                        <strong>
+
+                                            <?= number_format(
+                                                $restanteLiberar,
+                                                0,
+                                                ",",
+                                                "."
+                                            ) ?>
+
+                                            peças
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="coletor-previsao">
+
+                                    <i class="fa-solid fa-calendar-check"></i>
+
+                                    <div>
+
+                                        <span>
+                                            Previsão atual
+                                        </span>
+
+                                        <strong>
+
+                                            <?= formatarDataColeta(
+                                                $previsaoAtual
+                                            ) ?>
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="coletor-endereco">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    <div>
+
+                                        <span>
+                                            Local previsto para coleta
+                                        </span>
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                $endereco
+                                            ) ?>
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <?php if (
+                                    $linkMaps !== ""
+                                ) { ?>
+
+                                    <a
+                                        href="<?= htmlspecialchars(
+                                                    $linkMaps,
+                                                    ENT_QUOTES,
+                                                    "UTF-8"
+                                                ) ?>"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="coletor-btn-rota">
+
+                                        <i class="fa-solid fa-route"></i>
+
+                                        <span>
+                                            Ver local no Google Maps
+                                        </span>
+
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                                    </a>
+
+                                <?php } ?>
+
+                            </div>
+
+                        <?php } ?>
+
+                    </div>
+
+                </section>
+
+            <?php } ?>
+
+
+            <!-- =================================================
+             COLETAS REALIZADAS
+             ================================================= -->
+
+            <?php if ($coletadas > 0) { ?>
+
+                <section class="portal-section">
+
+                    <div class="portal-section-title">
+
+                        <div>
+
+                            <h2>
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                Coletas realizadas
+
+                            </h2>
+
+                            <p>
+                                Retiradas já registradas pelo coletor.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="portal-producao-grid">
+
+                        <?php foreach (
+                            $coletas as $coleta
+                        ) { ?>
+
+                            <?php
+
+                            if (
+                                $coleta["coleta_status"]
+                                !== "Coletado"
+                            ) {
+                                continue;
+                            }
+
+                            ?>
+
+
+                            <div class="portal-producao-card finalizado">
+
+                                <div class="portal-producao-topo">
+
+                                    <div>
+
+                                        <span class="portal-codigo">
+
+                                            <?= htmlspecialchars(
+                                                $coleta["codigo"]
+                                            ) ?>
+
+                                        </span>
+
+                                        <h3>
+
+                                            <?= htmlspecialchars(
+                                                $coleta["razao_social"]
+                                            ) ?>
+
+                                        </h3>
+
+                                    </div>
+
+
+                                    <span class="portal-badge sucesso">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Coletado
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="portal-info-grid">
+
+                                    <div>
+
+                                        <span>
+                                            Produto
+                                        </span>
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                $coleta["produto_nome"]
+                                            ) ?>
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Quantidade coletada
+                                        </span>
+
+                                        <strong>
+
+                                            <?= number_format(
+                                                intval(
+                                                    $coleta["quantidade_coleta"]
+                                                ),
+                                                0,
+                                                ",",
+                                                "."
+                                            ) ?>
+
+                                            peças
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="portal-status-final">
+
+                                    <i class="fa-solid fa-truck-fast"></i>
+
+                                    <div>
+
+                                        <strong>
+                                            Coleta realizada
+                                        </strong>
+
+                                        <span>
+
+                                            <?= !empty($coleta["data_coleta"])
+                                                ? "Registrada em " .
+                                                formatarDataHoraColeta(
+                                                    $coleta["data_coleta"]
+                                                )
+                                                : "Coleta registrada" ?>
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="coletor-endereco">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    <div>
+
+                                        <span>
+                                            Local da coleta
+                                        </span>
+
+                                        <strong>
+
+                                            <?= htmlspecialchars(
+                                                montarEnderecoColeta(
+                                                    $coleta
+                                                )
+                                            ) ?>
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        <?php } ?>
+
+                    </div>
+
+                </section>
+
+            <?php } ?>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
      MODAL - CONFIRMAR COLETA
      ========================================================= -->
 
-<div
-    class="modal-overlay"
-    id="modalColeta"
-    aria-hidden="true">
-
     <div
-        class="modal-confirmacao"
-        role="dialog"
-        aria-modal="true">
+        class="modal-overlay"
+        id="modalColeta"
+        aria-hidden="true">
 
-        <button
-            type="button"
-            class="modal-fechar"
-            id="fecharModalColeta">
+        <div
+            class="modal-confirmacao"
+            role="dialog"
+            aria-modal="true">
 
-            <i class="fa-solid fa-xmark"></i>
+            <button
+                type="button"
+                class="modal-fechar"
+                id="fecharModalColeta">
 
-        </button>
+                <i class="fa-solid fa-xmark"></i>
 
-
-        <div class="modal-confirmacao-icon">
-
-            <i class="fa-solid fa-truck"></i>
-
-        </div>
+            </button>
 
 
-        <h2>
-            Registrar coleta
-        </h2>
+            <div class="modal-confirmacao-icon">
 
-
-        <p>
-            Confirme a retirada das peças liberadas pela terceirizada.
-        </p>
-
-
-        <div class="portal-info-grid">
-
-            <div>
-
-                <span>
-                    Produção
-                </span>
-
-                <strong id="modalCodigo">
-                    -
-                </strong>
+                <i class="fa-solid fa-truck"></i>
 
             </div>
 
 
-            <div>
+            <h2>
+                Registrar coleta
+            </h2>
 
-                <span>
-                    Terceirizada
-                </span>
 
-                <strong id="modalEmpresa">
-                    -
-                </strong>
+            <p>
+                Confirme a retirada das peças liberadas pela terceirizada.
+            </p>
+
+
+            <div class="portal-info-grid">
+
+                <div>
+
+                    <span>
+                        Produção
+                    </span>
+
+                    <strong id="modalCodigo">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Terceirizada
+                    </span>
+
+                    <strong id="modalEmpresa">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Produto
+                    </span>
+
+                    <strong id="modalProduto">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Quantidade desta coleta
+                    </span>
+
+                    <strong id="modalQuantidade">
+                        -
+                    </strong>
+
+                </div>
 
             </div>
 
 
-            <div>
+            <form
+                action="registrar_coleta.php"
+                method="POST"
+                id="formConfirmarColeta">
 
-                <span>
-                    Produto
-                </span>
-
-                <strong id="modalProduto">
-                    -
-                </strong>
-
-            </div>
-
-
-            <div>
-
-                <span>
-                    Quantidade desta coleta
-                </span>
-
-                <strong id="modalQuantidade">
-                    -
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <form
-            action="registrar_coleta.php"
-            method="POST"
-            id="formConfirmarColeta">
-
-            <!--
+                <!--
                 IMPORTANTE:
                 Agora este campo contém o ID da tabela
                 producao_coletas, e não o ID da produção.
             -->
 
-            <input
-                type="hidden"
-                name="coleta_id"
-                id="modalProducaoId"
-                value="">
+                <input
+                    type="hidden"
+                    name="coleta_id"
+                    id="modalProducaoId"
+                    value="">
 
 
-            <div class="modal-acoes">
+                <div class="modal-acoes">
 
-                <button
-                    type="button"
-                    class="portal-btn alterar"
-                    id="cancelarModalColeta">
+                    <button
+                        type="button"
+                        class="portal-btn alterar"
+                        id="cancelarModalColeta">
 
-                    Cancelar
+                        Cancelar
 
-                </button>
+                    </button>
 
 
-                <button
-                    type="submit"
-                    class="portal-btn pronto">
+                    <button
+                        type="submit"
+                        class="portal-btn pronto">
 
-                    <i class="fa-solid fa-circle-check"></i>
+                        <i class="fa-solid fa-circle-check"></i>
 
-                    Confirmar coleta
+                        Confirmar coleta
 
-                </button>
+                    </button>
 
-            </div>
+                </div>
 
-        </form>
+            </form>
+
+        </div>
 
     </div>
 
-</div>
 
-
-<script src="../js/script.js?v=<?= time() ?>"></script>
+    <script src="../js/script.js?v=<?= time() ?>"></script>
 
 </body>
 
