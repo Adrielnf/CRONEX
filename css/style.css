@@ -4547,91 +4547,1091 @@
     }
 
     .alerta-atraso-producao {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
 
-    margin-top: 16px;
-    padding: 14px 16px;
+        margin-top: 16px;
+        padding: 14px 16px;
 
-    border: 1px solid #f3b4b4;
-    border-radius: 12px;
+        border: 1px solid #f3b4b4;
+        border-radius: 12px;
 
-    background: #fff5f5;
-    color: #b42318;
-}
+        background: #fff5f5;
+        color: #b42318;
+    }
 
-.alerta-atraso-producao > i {
-    margin-top: 2px;
-    font-size: 18px;
-    color: #d92d20;
-}
+    .alerta-atraso-producao>i {
+        margin-top: 2px;
+        font-size: 18px;
+        color: #d92d20;
+    }
 
-.alerta-atraso-producao strong {
-    display: block;
-    margin-bottom: 4px;
+    .alerta-atraso-producao strong {
+        display: block;
+        margin-bottom: 4px;
 
-    font-size: 14px;
-    font-weight: 700;
-}
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-.alerta-atraso-producao p {
-    margin: 0 0 4px;
+    .alerta-atraso-producao p {
+        margin: 0 0 4px;
 
-    font-size: 13px;
-    line-height: 1.4;
-    color: #b42318;
-}
+        font-size: 13px;
+        line-height: 1.4;
+        color: #b42318;
+    }
 
-.alerta-atraso-producao span {
-    display: block;
+    .alerta-atraso-producao span {
+        display: block;
 
-    font-size: 13px;
-    font-weight: 700;
-    color: #b42318;
-}
+        font-size: 13px;
+        font-weight: 700;
+        color: #b42318;
+    }
 
-/* =========================================================
+    /* =========================================================
    ALERTA DE COLETA ATRASADA
    ========================================================= */
 
-.alerta-atraso-coleta {
+    .alerta-atraso-coleta {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        margin-bottom: 16px;
+        padding: 14px 16px;
+
+        border: 1px solid #f3b4b4;
+        border-radius: 12px;
+
+        background: #fff5f5;
+        color: #b42318;
+    }
+
+    .alerta-atraso-coleta>i {
+        margin-top: 2px;
+
+        font-size: 18px;
+
+        color: #d92d20;
+    }
+
+    .alerta-atraso-coleta strong {
+        display: block;
+
+        margin-bottom: 4px;
+
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .alerta-atraso-coleta span {
+        display: block;
+
+        font-size: 13px;
+        line-height: 1.4;
+
+        color: #b42318;
+    }
+
+    /* ======================================================
+   AJUSTES DO LOGIN
+   ====================================================== */
+
+    .login-card form {
+        width: 100%;
+    }
+
+    .login-card .form-group {
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .login-card .form-group+.form-group {
+        margin-top: 20px !important;
+    }
+
+    .login-card .form-group label {
+        display: block;
+        width: 100%;
+        margin: 0 0 8px 0 !important;
+        padding: 0 !important;
+        line-height: 1.2;
+    }
+
+    .login-card .form-group input {
+        display: block;
+        width: 100%;
+        height: 44px;
+        min-height: 44px;
+        margin: 0 !important;
+        padding: 0 15px !important;
+        box-sizing: border-box;
+    }
+
+    .login-card .btn-login {
+        display: flex;
+        width: 100%;
+        height: 48px;
+        min-height: 48px;
+        margin: 20px 0 0 0 !important;
+        padding: 0 15px !important;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .login-card .login-footer {
+        margin-top: 28px;
+    }
+
+    /* =========================================================
+   CALENDÁRIO - MODAL
+   ========================================================= */
+
+    #abrirCalendario,
+    #abrirCalendarioMobile {
+        cursor: pointer;
+    }
+
+
+    /* =========================================================
+   FUNDO DO MODAL
+   ========================================================= */
+
+    .modal-calendario {
+        display: none;
+
+        position: fixed;
+        inset: 0;
+
+        z-index: 6000;
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+    }
+
+    .modal-calendario.ativo {
+        display: flex;
+    }
+
+
+    /* =========================================================
+   FUNDO ESCURO
+   ========================================================= */
+
+    .modal-calendario-overlay {
+        position: absolute;
+        inset: 0;
+
+        background: rgba(15, 23, 42, 0.62);
+    }
+
+
+    /* =========================================================
+   CAIXA DO CALENDÁRIO
+   ========================================================= */
+
+    .modal-calendario-box {
+        position: relative;
+        z-index: 1;
+
+        width: 100%;
+        max-width: 900px;
+
+        max-height: 90vh;
+        overflow-y: auto;
+
+        padding: 28px;
+
+        background: #ffffff;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0 25px 70px rgba(15, 23, 42, 0.25);
+    }
+
+
+    /* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+    .modal-calendario-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        margin-bottom: 25px;
+    }
+
+    .modal-calendario-header h2 {
+        margin: 0 0 5px 0;
+
+        color: #101828;
+
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .modal-calendario-header p {
+        margin: 0;
+
+        color: #667085;
+
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+
+    /* =========================================================
+   BOTÃO FECHAR
+   ========================================================= */
+
+    .modal-calendario-fechar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 40px;
+        height: 40px;
+
+        flex-shrink: 0;
+
+        border: none;
+        border-radius: 10px;
+
+        background: #f2f4f7;
+        color: #475467;
+
+        font-size: 18px;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    .modal-calendario-fechar:hover {
+        background: #e4e7ec;
+        color: #101828;
+    }
+
+
+    /* =========================================================
+   CONTROLES DO MÊS
+   ========================================================= */
+
+    .modal-calendario-controles {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 18px;
+
+        margin-bottom: 25px;
+    }
+
+    .modal-calendario-controles strong {
+        min-width: 180px;
+
+        text-align: center;
+
+        color: #101828;
+
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .btn-calendario-navegacao {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 40px;
+        height: 40px;
+
+        border: 1px solid #d0d5dd;
+        border-radius: 10px;
+
+        background: #ffffff;
+        color: #344054;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    .btn-calendario-navegacao:hover {
+        background: #f4f6fa;
+        border-color: #4161e8;
+        color: #4161e8;
+    }
+
+
+    /* =========================================================
+   GRADE DO CALENDÁRIO
+   ========================================================= */
+
+    .calendario-grade {
+        display: grid;
+
+        grid-template-columns:
+            repeat(7, minmax(0, 1fr));
+
+        gap: 8px;
+    }
+
+
+    /* =========================================================
+   DIAS DA SEMANA
+   ========================================================= */
+
+    .calendario-dia-semana {
+        padding: 10px 5px;
+
+        text-align: center;
+
+        color: #667085;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        text-transform: uppercase;
+    }
+
+
+    /* =========================================================
+   CÉLULAS DOS DIAS
+   ========================================================= */
+
+    .calendario-dia {
+        min-height: 95px;
+
+        padding: 10px;
+
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+
+        background: #ffffff;
+
+        transition: 0.2s;
+
+        cursor: pointer;
+    }
+
+    .calendario-dia:hover {
+        border-color: #4161e8;
+
+        box-shadow:
+            0 4px 12px rgba(65, 97, 232, 0.10);
+    }
+
+
+    /* =========================================================
+   DIAS FORA DO MÊS
+   ========================================================= */
+
+    .calendario-dia.vazio {
+        background: #f8f9fc;
+
+        border-color: transparent;
+
+        cursor: default;
+    }
+
+
+    /* =========================================================
+   NÚMERO DO DIA
+   ========================================================= */
+
+    .calendario-numero {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 30px;
+        height: 30px;
+
+        margin-bottom: 8px;
+
+        border-radius: 50%;
+
+        color: #344054;
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+   DIA ATUAL
+   ========================================================= */
+
+    .calendario-dia.hoje .calendario-numero {
+        background: #4161e8;
+
+        color: #ffffff;
+    }
+
+
+    /* =========================================================
+   EVENTOS
+   ========================================================= */
+
+    .calendario-evento {
+        display: flex;
+        align-items: center;
+
+        gap: 6px;
+
+        width: 100%;
+
+        margin-top: 5px;
+
+        padding: 5px 6px;
+
+        border-radius: 7px;
+
+        font-size: 11px;
+        font-weight: 600;
+
+        overflow: hidden;
+    }
+
+    .calendario-evento span {
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+    }
+
+
+    /* =========================================================
+   CORES DOS EVENTOS
+   ========================================================= */
+
+    .calendario-evento.producao {
+        background: #eef3ff;
+        color: #4161e8;
+    }
+
+    .calendario-evento.coleta {
+        background: #ecfdf3;
+        color: #08752c;
+    }
+
+    .calendario-evento.atrasado {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+    .calendario-evento.finalizado {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+
+    /* =========================================================
+   LEGENDA
+   ========================================================= */
+
+    .calendario-legenda {
+        display: flex;
+        align-items: center;
+
+        gap: 18px;
+
+        margin-top: 25px;
+        padding-top: 18px;
+
+        border-top: 1px solid #eaecf0;
+
+        flex-wrap: wrap;
+    }
+
+    .calendario-legenda span {
+        display: inline-flex;
+        align-items: center;
+
+        gap: 7px;
+
+        color: #667085;
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .calendario-legenda span i {
+        font-size: 8px;
+    }
+
+
+    /* =========================================================
+   CORES DOS PONTOS DA LEGENDA
+   ========================================================= */
+
+    .calendario-legenda span:nth-child(1) i {
+        color: #4161e8;
+    }
+
+    .calendario-legenda span:nth-child(2) i {
+        color: #16a34a;
+    }
+
+    .calendario-legenda span:nth-child(3) i {
+        color: #dc2626;
+    }
+
+    .calendario-legenda span:nth-child(4) i {
+        color: #027a48;
+    }
+
+
+    /* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .modal-calendario {
+            padding: 10px;
+        }
+
+        .modal-calendario-box {
+            max-height: 95vh;
+
+            padding: 20px;
+
+            border-radius: 16px;
+        }
+
+        .modal-calendario-header {
+            margin-bottom: 18px;
+        }
+
+        .modal-calendario-header h2 {
+            font-size: 21px;
+        }
+
+        .modal-calendario-header p {
+            font-size: 12px;
+        }
+
+        .modal-calendario-controles {
+            gap: 10px;
+
+            margin-bottom: 18px;
+        }
+
+        .modal-calendario-controles strong {
+            min-width: 150px;
+
+            font-size: 17px;
+        }
+
+        .btn-calendario-navegacao {
+            width: 36px;
+            height: 36px;
+        }
+
+        .calendario-grade {
+            gap: 5px;
+        }
+
+        .calendario-dia {
+            min-height: 75px;
+
+            padding: 7px;
+
+            border-radius: 9px;
+        }
+
+        .calendario-numero {
+            width: 26px;
+            height: 26px;
+
+            margin-bottom: 5px;
+
+            font-size: 12px;
+        }
+
+        .calendario-evento {
+            padding: 4px 5px;
+
+            font-size: 9px;
+
+            gap: 4px;
+        }
+
+        .calendario-legenda {
+            gap: 10px;
+
+            margin-top: 18px;
+        }
+
+    }
+
+
+    /* =========================================================
+   CELULARES PEQUENOS
+   ========================================================= */
+
+    @media (max-width: 480px) {
+
+        .modal-calendario-box {
+            padding: 15px;
+        }
+
+        .modal-calendario-header h2 {
+            font-size: 19px;
+        }
+
+        .modal-calendario-header p {
+            display: none;
+        }
+
+        .modal-calendario-fechar {
+            width: 36px;
+            height: 36px;
+        }
+
+        .modal-calendario-controles strong {
+            min-width: 125px;
+
+            font-size: 15px;
+        }
+
+        .calendario-dia-semana {
+            padding: 7px 2px;
+
+            font-size: 9px;
+        }
+
+        .calendario-dia {
+            min-height: 65px;
+
+            padding: 5px;
+        }
+
+        .calendario-numero {
+            width: 23px;
+            height: 23px;
+
+            font-size: 11px;
+        }
+
+        .calendario-evento {
+            display: block;
+
+            padding: 3px;
+
+            font-size: 8px;
+
+            text-align: center;
+        }
+
+        .calendario-evento i {
+            display: none;
+        }
+
+    }
+
+    /* =========================================================
+   MODAL - DETALHES DO DIA
+   ========================================================= */
+
+.modal-detalhes-dia {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 7000;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.modal-detalhes-dia.ativo {
+    display: flex;
+}
+
+
+/* =========================================================
+   FUNDO
+   ========================================================= */
+
+.modal-detalhes-dia-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.65);
+}
+
+
+/* =========================================================
+   CAIXA
+   ========================================================= */
+
+.modal-detalhes-dia-box {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 600px;
+
+    max-height: 85vh;
+    overflow-y: auto;
+
+    padding: 26px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 25px 70px rgba(15, 23, 42, 0.30);
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.modal-detalhes-dia-header {
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+.modal-detalhes-dia-header h2 {
+    margin: 0 0 5px 0;
+
+    color: #101828;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.modal-detalhes-dia-header p {
+    margin: 0;
+
+    color: #667085;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   BOTÃO FECHAR
+   ========================================================= */
+
+.modal-detalhes-dia-fechar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #f2f4f7;
+    color: #475467;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.modal-detalhes-dia-fechar:hover {
+    background: #e4e7ec;
+    color: #101828;
+}
+
+
+/* =========================================================
+   LISTA
+   ========================================================= */
+
+.lista-detalhes-dia {
+    display: flex;
+
+    flex-direction: column;
+
     gap: 12px;
+}
 
-    margin-bottom: 16px;
-    padding: 14px 16px;
 
-    border: 1px solid #f3b4b4;
+/* =========================================================
+   EVENTO
+   ========================================================= */
+
+.detalhe-evento {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 14px;
+
+    padding: 16px;
+
+    border: 1px solid #e4e7ec;
+
     border-radius: 12px;
 
-    background: #fff5f5;
-    color: #b42318;
+    background: #ffffff;
 }
 
-.alerta-atraso-coleta > i {
-    margin-top: 2px;
 
-    font-size: 18px;
+/* =========================================================
+   ÍCONE
+   ========================================================= */
 
-    color: #d92d20;
+.detalhe-evento-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #eef3ff;
+
+    color: #4161e8;
+
+    font-size: 17px;
 }
 
-.alerta-atraso-coleta strong {
-    display: block;
 
-    margin-bottom: 4px;
+/* =========================================================
+   CONTEÚDO
+   ========================================================= */
+
+.detalhe-evento-conteudo {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.detalhe-evento-conteudo strong {
+    color: #101828;
 
     font-size: 14px;
     font-weight: 700;
 }
 
-.alerta-atraso-coleta span {
-    display: block;
+.detalhe-evento-conteudo span {
+    color: #344054;
 
-    font-size: 13px;
-    line-height: 1.4;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.detalhe-evento-conteudo small {
+    color: #667085;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   CORES DOS EVENTOS
+   ========================================================= */
+
+.detalhe-evento.producao {
+    border-left: 4px solid #4161e8;
+}
+
+.detalhe-evento.producao
+.detalhe-evento-icone {
+    background: #eef3ff;
+    color: #4161e8;
+}
+
+
+.detalhe-evento.coleta {
+    border-left: 4px solid #16a34a;
+}
+
+.detalhe-evento.coleta
+.detalhe-evento-icone {
+    background: #ecfdf3;
+    color: #16a34a;
+}
+
+
+.detalhe-evento.atrasado {
+    border-left: 4px solid #dc2626;
+}
+
+.detalhe-evento.atrasado
+.detalhe-evento-icone {
+    background: #fef3f2;
+    color: #dc2626;
+}
+
+
+.detalhe-evento.finalizado {
+    border-left: 4px solid #027a48;
+}
+
+.detalhe-evento.finalizado
+.detalhe-evento-icone {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+
+/* =========================================================
+   NENHUM EVENTO
+   ========================================================= */
+
+.detalhes-dia-vazio {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 40px 20px;
+
+    text-align: center;
+
+    border: 1px dashed #d0d5dd;
+
+    border-radius: 12px;
+
+    background: #f8f9fc;
+}
+
+.detalhes-dia-vazio i {
+    margin-bottom: 5px;
+
+    color: #98a2b3;
+
+    font-size: 32px;
+}
+
+.detalhes-dia-vazio strong {
+    color: #344054;
+
+    font-size: 14px;
+}
+
+.detalhes-dia-vazio span {
+    color: #667085;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .modal-detalhes-dia {
+        padding: 10px;
+    }
+
+    .modal-detalhes-dia-box {
+        padding: 20px;
+
+        max-height: 90vh;
+
+        border-radius: 15px;
+    }
+
+    .modal-detalhes-dia-header h2 {
+        font-size: 19px;
+    }
+
+    .detalhe-evento {
+        padding: 13px;
+
+        gap: 10px;
+    }
+
+    .detalhe-evento-icone {
+        width: 38px;
+        height: 38px;
+
+        font-size: 15px;
+    }
+
+}
+
+/* =========================================================
+   ALERTA DE ATRASO NOS DETALHES DO CALENDÁRIO
+   ========================================================= */
+
+.detalhe-evento-alerta {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    margin-top: 10px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #fef3f2;
+
+    border: 1px solid #fecdca;
 
     color: #b42318;
+}
+
+.detalhe-evento-alerta strong {
+    color: #b42318;
+
+    font-size: 12px;
+}
+
+.detalhe-evento-alerta span {
+    color: #912018;
+
+    font-size: 12px;
+}
+
+.detalhe-evento-alerta small {
+    color: #912018;
+
+    font-size: 11px;
 }

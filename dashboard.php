@@ -287,6 +287,355 @@ if ($resultadoColetas) {
 }
 
 
+/* =========================================================
+   DADOS DO CALENDÁRIO
+   ========================================================= */
+
+$sqlCalendario = "
+
+    SELECT
+
+        pr.id AS producao_id,
+        pr.codigo,
+        pr.quantidade,
+
+        pr.previsao_entrega,
+        pr.nova_previsao,
+        pr.confirmacao_prazo,
+
+        p.nome AS produto_nome,
+
+        t.razao_social AS terceirizado_nome,
+
+        COALESCE(
+            (
+                SELECT SUM(pc.quantidade)
+                FROM producao_coletas pc
+                WHERE
+                    pc.producao_id = pr.id
+                    AND pc.status = 'Coletado'
+            ),
+            0
+        ) AS quantidade_coletada
+
+    FROM producao pr
+
+    INNER JOIN produtos p
+        ON p.id = pr.produto_id
+
+    INNER JOIN terceirizados t
+        ON t.id = pr.terceirizado_id
+
+    ORDER BY
+        COALESCE(
+            pr.nova_previsao,
+            pr.previsao_entrega
+        ) ASC,
+
+        pr.id ASC
+
+";
+
+$resultadoCalendario =
+    mysqli_query(
+        $conexao,
+        $sqlCalendario
+    );
+
+
+$eventosCalendario = [];
+
+
+if ($resultadoCalendario) {
+
+    while (
+        $linha = mysqli_fetch_assoc(
+            $resultadoCalendario
+        )
+    ) {
+
+        $quantidadeTotal =
+            intval(
+                $linha["quantidade"]
+            );
+
+
+        $quantidadeColetada =
+            intval(
+                $linha["quantidade_coletada"]
+            );
+
+
+        /*
+         * Verifica se a produção já foi finalizada.
+         */
+
+        $finalizada =
+            (
+                $quantidadeTotal > 0 &&
+                $quantidadeColetada >= $quantidadeTotal
+            );
+
+
+        /*
+         * Usa a nova previsão quando existir.
+         */
+
+        $previsao =
+            !empty($linha["nova_previsao"])
+            ? $linha["nova_previsao"]
+            : $linha["previsao_entrega"];
+
+
+        /*
+         * Adiciona o evento de previsão
+         * da produção.
+         */
+
+        if (!empty($previsao)) {
+
+            $dataPrevisao =
+                date(
+                    "Y-m-d",
+                    strtotime($previsao)
+                );
+
+
+            $eventoClasse = "producao";
+
+
+            /*
+             * Se estiver atrasada e ainda não finalizada,
+             * o evento será mostrado como atraso.
+             */
+
+            if (
+                !$finalizada &&
+                $dataPrevisao < date("Y-m-d")
+            ) {
+
+                $eventoClasse =
+                    "atrasado";
+            } elseif ($finalizada) {
+
+                $eventoClasse =
+                    "finalizado";
+            }
+
+
+            $eventosCalendario[] = [
+
+                "data" =>
+                $dataPrevisao,
+
+                "tipo" =>
+                $eventoClasse,
+
+                "titulo" =>
+                $linha["codigo"],
+
+                "produto" =>
+                $linha["produto_nome"],
+
+                "terceirizada" =>
+                $linha["terceirizado_nome"],
+
+                "descricao" =>
+                "Previsão de produção",
+
+                "quantidade" =>
+                $quantidadeTotal
+
+            ];
+        }
+
+
+        /*
+         * Busca as coletas dessa produção.
+         */
+
+        $sqlColetasCalendario = "
+
+            SELECT
+
+                id,
+                quantidade,
+                status,
+                data_liberacao,
+                data_coleta
+
+            FROM producao_coletas
+
+            WHERE producao_id = ?
+
+            ORDER BY
+                data_liberacao ASC,
+                id ASC
+
+        ";
+
+
+        $stmtColetasCalendario =
+            mysqli_prepare(
+                $conexao,
+                $sqlColetasCalendario
+            );
+
+
+        if ($stmtColetasCalendario) {
+
+            mysqli_stmt_bind_param(
+                $stmtColetasCalendario,
+                "i",
+                $linha["producao_id"]
+            );
+
+
+            mysqli_stmt_execute(
+                $stmtColetasCalendario
+            );
+
+
+            $resultadoColetasCalendario =
+                mysqli_stmt_get_result(
+                    $stmtColetasCalendario
+                );
+
+
+            while (
+                $coletaCalendario =
+                mysqli_fetch_assoc(
+                    $resultadoColetasCalendario
+                )
+            ) {
+
+                /*
+                 * Coleta já realizada.
+                 */
+
+                if (
+                    $coletaCalendario["status"]
+                    === "Coletado"
+                ) {
+
+                    if (
+                        !empty($coletaCalendario["data_coleta"])
+                    ) {
+
+                        $dataColeta =
+                            date(
+                                "Y-m-d",
+                                strtotime(
+                                    $coletaCalendario["data_coleta"]
+                                )
+                            );
+
+
+                        $eventosCalendario[] = [
+
+                            "data" =>
+                            $dataColeta,
+
+                            "tipo" =>
+                            "finalizado",
+
+                            "titulo" =>
+                            $linha["codigo"],
+
+                            "produto" =>
+                            $linha["produto_nome"],
+
+                            "terceirizada" =>
+                            $linha["terceirizado_nome"],
+
+                            "descricao" =>
+                            "Coleta realizada",
+
+                            "quantidade" =>
+                            intval(
+                                $coletaCalendario["quantidade"]
+                            )
+
+                        ];
+                    }
+
+
+                    /*
+                 * Coleta ainda aguardando.
+                 */
+                } else {
+
+                    if (
+                        !empty($coletaCalendario["data_liberacao"])
+                    ) {
+
+                        $dataLiberacao =
+                            date(
+                                "Y-m-d",
+                                strtotime(
+                                    $coletaCalendario["data_liberacao"]
+                                )
+                            );
+
+
+                        $tipoColeta =
+                            "coleta";
+
+
+                        /*
+                         * Se a data já passou,
+                         * essa coleta está atrasada.
+                         */
+
+                        if (
+                            $dataLiberacao
+                            < date("Y-m-d")
+                        ) {
+
+                            $tipoColeta =
+                                "atrasado";
+                        }
+
+
+                        $eventosCalendario[] = [
+
+                            "data" =>
+                            $dataLiberacao,
+
+                            "tipo" =>
+                            $tipoColeta,
+
+                            "titulo" =>
+                            $linha["codigo"],
+
+                            "produto" =>
+                            $linha["produto_nome"],
+
+                            "terceirizada" =>
+                            $linha["terceirizado_nome"],
+
+                            "descricao" =>
+                            "Coleta disponível",
+
+                            "quantidade" =>
+                            intval(
+                                $coletaCalendario["quantidade"]
+                            )
+
+                        ];
+                    }
+                }
+            }
+
+
+            mysqli_stmt_close(
+                $stmtColetasCalendario
+            );
+        }
+    }
+}
+
+
 function statusDashboard($producao)
 {
     $quantidadeTotal = intval(
@@ -383,7 +732,6 @@ function statusDashboard($producao)
         href="css/style.css?v=<?= time() ?>">
 
 </head>
-
 
 
 <body>
@@ -582,13 +930,29 @@ function statusDashboard($producao)
                         <table>
 
                             <table class="dashboard-producoes">
+
                                 <thead>
+
                                     <tr>
-                                        <th>Produção</th>
-                                        <th>Terceirizada</th>
-                                        <th>Produto</th>
-                                        <th>Situação</th>
+
+                                        <th>
+                                            Produção
+                                        </th>
+
+                                        <th>
+                                            Terceirizada
+                                        </th>
+
+                                        <th>
+                                            Produto
+                                        </th>
+
+                                        <th>
+                                            Situação
+                                        </th>
+
                                     </tr>
+
                                 </thead>
 
 
@@ -622,12 +986,15 @@ function statusDashboard($producao)
                                                 <td class="col-producao">
 
                                                     <strong>
+
                                                         <?= htmlspecialchars(
                                                             $producao["codigo"]
                                                         ) ?>
+
                                                     </strong>
 
                                                 </td>
+
 
                                                 <td class="col-terceirizada">
 
@@ -637,6 +1004,7 @@ function statusDashboard($producao)
 
                                                 </td>
 
+
                                                 <td class="col-produto">
 
                                                     <?= htmlspecialchars(
@@ -644,6 +1012,7 @@ function statusDashboard($producao)
                                                     ) ?>
 
                                                 </td>
+
 
                                                 <td class="col-situacao">
 
@@ -656,6 +1025,7 @@ function statusDashboard($producao)
                                                             class="fa-solid <?= htmlspecialchars(
                                                                                 $status["icone"]
                                                                             ) ?>">
+
                                                         </i>
 
                                                         <?= htmlspecialchars(
@@ -828,7 +1198,263 @@ function statusDashboard($producao)
 
     </div>
 
+
+    <!-- =====================================================
+         MODAL - CALENDÁRIO
+         ===================================================== -->
+
+    <div
+        id="modalCalendario"
+        class="modal-calendario"
+        aria-hidden="true">
+
+        <div class="modal-calendario-overlay"></div>
+
+
+        <div
+            class="modal-calendario-box"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloCalendario">
+
+            <div class="modal-calendario-header">
+
+                <div>
+
+                    <h2 id="tituloCalendario">
+                        Calendário
+                    </h2>
+
+                    <p>
+                        Visualize produções e coletas por data.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="fecharCalendario"
+                    class="modal-calendario-fechar"
+                    aria-label="Fechar calendário">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="modal-calendario-controles">
+
+                <button
+                    type="button"
+                    id="calendarioAnterior"
+                    class="btn-calendario-navegacao">
+
+                    <i class="fa-solid fa-chevron-left"></i>
+
+                </button>
+
+
+                <strong id="calendarioMes">
+                    Setembro 2026
+                </strong>
+
+
+                <button
+                    type="button"
+                    id="calendarioProximo"
+                    class="btn-calendario-navegacao">
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="calendarioGrade"
+                class="calendario-grade">
+
+                <!-- O JavaScript preencherá o calendário aqui -->
+
+            </div>
+
+
+            <div class="calendario-legenda">
+
+                <span>
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    Produção
+
+                </span>
+
+
+                <span>
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    Coleta
+
+                </span>
+
+
+                <span>
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    Atrasado
+
+                </span>
+
+
+                <span>
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    Finalizado
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DETALHES DO DIA
+         ===================================================== -->
+
+    <div
+        id="modalDetalhesDia"
+        class="modal-detalhes-dia"
+        aria-hidden="true">
+
+        <div class="modal-detalhes-dia-overlay"></div>
+
+
+        <div
+            class="modal-detalhes-dia-box"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloDetalhesDia">
+
+            <div class="modal-detalhes-dia-header">
+
+                <div>
+
+                    <h2 id="tituloDetalhesDia">
+                        Eventos do dia
+                    </h2>
+
+                    <p id="subtituloDetalhesDia">
+                        Confira o que está previsto para esta data.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="fecharDetalhesDia"
+                    class="modal-detalhes-dia-fechar"
+                    aria-label="Fechar detalhes">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="listaDetalhesDia"
+                class="lista-detalhes-dia">
+
+                <!-- O JavaScript preencherá os eventos aqui. -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        window.cronexCalendario =
+            <?= json_encode(
+                $eventosCalendario,
+                JSON_UNESCAPED_UNICODE
+                    | JSON_UNESCAPED_SLASHES
+            ) ?>;
+    </script>
+
+
     <script src="js/script.js"></script>
+
+
+   <script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const parametros =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            if (
+                parametros.get("calendario") !== "1"
+            ) {
+
+                return;
+
+            }
+
+
+            const modal =
+                document.getElementById(
+                    "modalCalendario"
+                );
+
+
+            if (!modal) {
+
+                return;
+
+            }
+
+
+            /*
+             * Abre diretamente o modal.
+             */
+
+            modal.classList.add(
+                "ativo"
+            );
+
+            modal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.classList.add(
+                "modal-aberto"
+            );
+
+        }
+    );
+
+</script>
+
 
 </body>
 

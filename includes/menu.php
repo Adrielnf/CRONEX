@@ -30,6 +30,7 @@ if (!isset($base)) {
 
         </a>
 
+
         <a href="<?= $base ?>terceirizados/listar.php">
 
             <i class="fa-solid fa-industry"></i>
@@ -39,6 +40,7 @@ if (!isset($base)) {
             </span>
 
         </a>
+
 
         <a href="<?= $base ?>produtos/listar.php">
 
@@ -50,6 +52,7 @@ if (!isset($base)) {
 
         </a>
 
+
         <a href="<?= $base ?>producao/listar.php">
 
             <i class="fa-solid fa-gears"></i>
@@ -59,6 +62,7 @@ if (!isset($base)) {
             </span>
 
         </a>
+
 
         <a href="<?= $base ?>previsao/listar.php">
 
@@ -70,6 +74,7 @@ if (!isset($base)) {
 
         </a>
 
+
         <a href="<?= $base ?>relatorios/listar.php">
 
             <i class="fa-solid fa-chart-column"></i>
@@ -80,7 +85,22 @@ if (!isset($base)) {
 
         </a>
 
+
+        <a
+            href="<?= $base ?>dashboard.php?calendario=1"
+            id="abrirCalendario">
+
+            <i class="fa-solid fa-calendar-days"></i>
+
+            <span>
+                Calendário
+            </span>
+
+        </a>
+
+
         <hr>
+
 
         <a href="<?= $base ?>logout.php">
 
@@ -96,50 +116,113 @@ if (!isset($base)) {
 
 </aside>
 
-<button type="button" class="menu-mobile-toggle" onclick="toggleMenuMobile()">
-    <i class="fa-solid fa-bars"></i>
-    <span>Menu</span>
-</button>
 
+<button
+    type="button"
+    class="menu-mobile-toggle"
+    onclick="toggleMenuMobile()">
+
+    <i class="fa-solid fa-bars"></i>
+
+    <span>
+        Menu
+    </span>
+
+</button>
 
 
 <nav class="menu-mobile">
 
     <a href="<?= $base ?>dashboard.php">
+
         <i class="fa-solid fa-house"></i>
-        <span>Dashboard</span>
+
+        <span>
+            Dashboard
+        </span>
+
     </a>
+
 
     <a href="<?= $base ?>terceirizados/listar.php">
+
         <i class="fa-solid fa-industry"></i>
-        <span>Terceirizados</span>
+
+        <span>
+            Terceirizados
+        </span>
+
     </a>
+
 
     <a href="<?= $base ?>produtos/listar.php">
+
         <i class="fa-solid fa-shirt"></i>
-        <span>Produtos</span>
+
+        <span>
+            Produtos
+        </span>
+
     </a>
+
 
     <a href="<?= $base ?>producao/listar.php">
+
         <i class="fa-solid fa-gears"></i>
-        <span>Produção</span>
+
+        <span>
+            Produção
+        </span>
+
     </a>
+
 
     <a href="<?= $base ?>previsao/listar.php">
+
         <i class="fa-solid fa-calendar-days"></i>
-        <span>Previsão e Coleta</span>
+
+        <span>
+            Previsão e Coleta
+        </span>
+
     </a>
 
+
     <a href="<?= $base ?>relatorios/listar.php">
+
         <i class="fa-solid fa-chart-column"></i>
-        <span>Relatórios</span>
+
+        <span>
+            Relatórios
+        </span>
+
     </a>
+
+
+    <a
+        href="<?= $base ?>dashboard.php?calendario=1"
+        id="abrirCalendarioMobile">
+
+        <i class="fa-solid fa-calendar-days"></i>
+
+        <span>
+            Calendário
+        </span>
+
+    </a>
+
 
     <hr>
 
+
     <a href="<?= $base ?>logout.php">
+
         <i class="fa-solid fa-right-from-bracket"></i>
-        <span>Sair</span>
+
+        <span>
+            Sair
+        </span>
+
     </a>
 
 </nav>
